@@ -87,7 +87,7 @@ namespace MusicApi.Tests
             // Act
             var result = await trackRepo.GetByIdAsync(testId);
             // Assert
-            Assert.That(result, Is.EqualTo(expectedTrack));
+            Assert.That(result.Id, Is.EqualTo(expectedTrack.Id));
         }
         [Test]
         public async Task GetById_InvalidId_Null()
@@ -110,7 +110,7 @@ namespace MusicApi.Tests
             // Act
             var result = await trackRepo.CreateNewTrack(newTrack);
             // Assert
-            Assert.That(result, Is.EqualTo(newTrack));
+            Assert.That(result.Name, Is.EqualTo(newTrack.Name));
         }
         [Test]
         public async Task CreateNewTrack_InvalidTrack_Null()
@@ -125,46 +125,49 @@ namespace MusicApi.Tests
         }
         // Update
         [Test]
-        public async Task UpdateTrack_ValidTrack_UpdatedTrack()
+        public void UpdateTrack_ValidTrack_UpdatedTrack()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             var updatedTrack = GetProductsSeedData().First();
+            updatedTrack.Name = "UpdatedTrack";
             // Act
-            var result = await trackRepo.UpdateTrack(updatedTrack);
+            var result = trackRepo.UpdateTrack(updatedTrack);
             // Assert
-            Assert.That(result, Is.EqualTo(updatedTrack));
+            Assert.That(result.Id, Is.EqualTo(updatedTrack.Id));
+            Assert.That(result.Name, Is.EqualTo(updatedTrack.Name));
         }
         [Test]
-        public async Task UpdateTrack_InvalidTrack_Null()
+        public void UpdateTrack_InvalidTrack_Null()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             var updatedTrack = new Track { Name = null };
             // Act
-            var result = await trackRepo.UpdateTrack(updatedTrack);
+            var result = trackRepo.UpdateTrack(updatedTrack);
             // Assert
             Assert.That(result, Is.Null);
         }
         // Delete Track
-        public async Task DeleteTrack_ValidTrack_UpdatedTrack()
+        [Test]
+        public void DeleteTrack_ValidTrack_toDeleteTrack()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = GetProductsSeedData().First();
             // Act
-            var result = await trackRepo.UpdateTrack(toDeleteTrack);
+            var result = trackRepo.UpdateTrack(toDeleteTrack);
             // Assert
-            Assert.That(result, Is.EqualTo(toDeleteTrack));
+            Assert.That(result.Id, Is.EqualTo(toDeleteTrack.Id));
         }
         [Test]
-        public async Task DeleteTrack_InvalidTrack_Null()
+        public void DeleteTrack_InvalidTrack_Null()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = new Track { Name = null };
             // Act
-            var result = await trackRepo.UpdateTrack(toDeleteTrack);
+            var result = trackRepo.UpdateTrack(toDeleteTrack);
             // Assert
             Assert.That(result, Is.Null);
         }

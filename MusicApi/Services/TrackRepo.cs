@@ -1,4 +1,6 @@
-﻿using MusicApi.Services.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicApi.Services.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MusicApi.Services
 {
@@ -9,25 +11,46 @@ namespace MusicApi.Services
         {
             _dbContext = dbContext;
         }
-        public Task<IEnumerable<Track>> GetAllAsync()
+        public async Task<IEnumerable<Track>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Tracks.ToListAsync();
         }
-        public Task<Track> GetByIdAsync(int id)
+        public async Task<Track> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Tracks.FirstOrDefaultAsync(t => t.Id == id);
         }
-        public Task<Track> CreateNewTrack(Track newTrack)
+        public async Task<Track> CreateNewTrack(Track newTrack)
         {
-            throw new NotImplementedException();
+            if (newTrack == null || newTrack.Id != 0 || newTrack.Name == null)
+                // throw new ArgumentException("Invalid track data");
+                return null;
+
+            var createdTrack = await _dbContext.Tracks.AddAsync(newTrack);
+            await _dbContext.SaveChangesAsync();
+
+            return createdTrack.Entity;
         }
-        public Task<Track> UpdateTrack(Track updatedTrack)
+        public Track UpdateTrack(Track track)
         {
-            throw new NotImplementedException();
+            if (track == null || track.Id == 0 || track.Name == null)
+                // throw new ArgumentException("Invalid track data");
+                return null;
+
+            var updatedTrack = _dbContext.Tracks.Update(track);
+            _dbContext.SaveChanges();
+
+            return updatedTrack.Entity;
         }
-        public Task<Track> DeleteTrack(Track toDeleteTrack)
+        public Track DeleteTrack(Track track)
         {
-            throw new NotImplementedException();
-        }            
+            if (track == null || track.Id == 0 || track.Name == null)
+                // throw new ArgumentException("Invalid track data");
+                return null;
+
+            var deletedTrack = _dbContext.Tracks.Remove(track);
+            _dbContext.SaveChanges();
+
+            return deletedTrack.Entity;
+        }
     }
 }
