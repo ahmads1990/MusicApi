@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicApi.Services.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MusicApi.Services
 {
