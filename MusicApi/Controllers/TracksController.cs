@@ -55,7 +55,7 @@ namespace MusicApi.Controllers
         {
             try
             {
-                var deletedTrack = _trackRepo.UpdateTrack(track);
+                var deletedTrack = _trackRepo.DeleteTrack(track);
                 return Ok(deletedTrack);
             }
             catch (ArgumentException ex)
