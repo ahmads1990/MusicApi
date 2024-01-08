@@ -12,18 +12,18 @@ namespace MusicApi.Controllers
         {
             _trackRepo = trackRepo;
         }
-        [HttpGet("tracks")]
+        [HttpGet("")]
         public async Task<IActionResult> GetTracks()
         {
             return Ok(await _trackRepo.GetAllAsync());
         }
 
-        [HttpGet("tracks/{trackId}")]
+        [HttpGet("{trackId}")]
         public async Task<IActionResult> GetTrackById(int trackId)
         {
             return Ok(await _trackRepo.GetByIdAsync(trackId));
         }
-        [HttpPost("create")]
+        [HttpPost("")]
         public async Task<IActionResult> CreateNewTrack([FromBody] Track newTrack)
         {
             try
@@ -37,7 +37,7 @@ namespace MusicApi.Controllers
                 return BadRequest($"Invalid track data: {ex.Message}");
             }
         }
-        [HttpPut("update")]
+        [HttpPut("")]
         public IActionResult UpdateTrack([FromBody] Track newTrack)
         {
             try
@@ -50,7 +50,7 @@ namespace MusicApi.Controllers
                 return BadRequest($"{ex.Message}");
             }
         }
-        [HttpDelete("delete")]
+        [HttpDelete("")]
         public IActionResult DeleteTrack([FromBody] Track track)
         {
             try
