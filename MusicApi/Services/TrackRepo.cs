@@ -11,7 +11,9 @@ namespace MusicApi.Services
         }
         public async Task<IEnumerable<Track>> GetAllAsync()
         {
-            return await _dbContext.Tracks.ToListAsync();
+            return await _dbContext.Tracks
+                                .Include(t=>t.Genres)
+                                .ToListAsync();
         }
         public async Task<Track> GetByIdAsync(int id)
         {
