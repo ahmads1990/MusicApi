@@ -25,8 +25,11 @@ namespace MusicApi.Services
         }
         public async Task<Track> CreateNewTrack(Track newTrack)
         {
-            if (newTrack == null || newTrack.Id != 0 || newTrack.Name == null)
-                throw new ArgumentException("Invalid track data");
+            if (newTrack == null || string.IsNullOrEmpty(newTrack.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
+
+            if (newTrack.Id != 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);            
 
             var createdTrack = await _dbContext.Tracks.AddAsync(newTrack);
             await _dbContext.SaveChangesAsync();
@@ -35,11 +38,14 @@ namespace MusicApi.Services
         }
         public Track UpdateTrack(Track track)
         {
-            if (track == null || track.Id == 0 || track.Name == null)
-                throw new ArgumentException("Invalid track data");
+            if (track == null || string.IsNullOrEmpty(track.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
 
+            if (track.Id <= 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
+            
             if (!CheckTrackExist(track.Id))
-                throw new ArgumentException("Track does not exist");
+                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
 
             var updatedTrack = _dbContext.Tracks.Update(track);
             _dbContext.SaveChanges();
@@ -48,11 +54,14 @@ namespace MusicApi.Services
         }
         public Track DeleteTrack(Track track)
         {
-            if (track == null || track.Id == 0 || track.Name == null)
-                throw new ArgumentException("Invalid track data");
+            if (track == null || string.IsNullOrEmpty(track.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
+
+            if (track.Id <= 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
             if (!CheckTrackExist(track.Id))
-                throw new ArgumentException("Track does not exist");
+                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
 
             var deletedTrack = _dbContext.Tracks.Remove(track);
             _dbContext.SaveChanges();

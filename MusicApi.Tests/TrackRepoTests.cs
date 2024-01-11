@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
+using MusicApi.StaticData;
 using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,6 @@ namespace MusicApi.Tests
         ITrackRepo trackRepo;
         SqliteConnection connection;
         static int seedDataCount = 5;
-        static string exceptionInvalidData = "Invalid track data";
-        static string exceptionTrackNotExist = "Track does not exist";
         public IEnumerable<Track> GetProductsSeedData()
         {
             return new List<Track>()
@@ -119,15 +118,15 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var newTrack = new Track { Name = null };
+            var newTrack = new Track { Name = "" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
                 await trackRepo.CreateNewTrack(newTrack));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public async Task CreateNewTrack_InvalidTrackId_Throws()
+        public async Task CreateNewTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
@@ -136,7 +135,7 @@ namespace MusicApi.Tests
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
                    await trackRepo.CreateNewTrack(newTrack));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
         }
         // Update
         [Test]
@@ -163,10 +162,10 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.UpdateTrack(updatedTrack));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public void UpdateTrack_InvalidTrackId_Throws()
+        public void UpdateTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
@@ -175,7 +174,19 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.UpdateTrack(toUpdateTrack));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionTrackNotExist));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
+        }
+        [Test]
+        public void UpdateTrack_NonExistingTrackId_Throws()
+        {
+            // Arrange
+            trackRepo = new TrackRepo(appDbContext);
+            var toUpdateTrack = new Track { Id = 1000, Name = "trackName" };
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                trackRepo.UpdateTrack(toUpdateTrack));
+
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
         }
         // Delete Track
         [Test]
@@ -190,7 +201,7 @@ namespace MusicApi.Tests
             Assert.That(result.Id, Is.EqualTo(toDeleteTrack.Id));
         }
         [Test]
-        public void DeleteTrack_InvalidTrackId_Throws()
+        public void DeleteTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
@@ -199,7 +210,19 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.DeleteTrack(toDeleteTrack));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionTrackNotExist));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
+        }
+        [Test]
+        public void DeleteTrack_NonExistingTrackId_Throws()
+        {
+            // Arrange
+            trackRepo = new TrackRepo(appDbContext);
+            var toDeleteTrack = new Track { Id = 1000, Name = "trackName" };
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                trackRepo.DeleteTrack(toDeleteTrack));
+
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
         }
     }
 }
