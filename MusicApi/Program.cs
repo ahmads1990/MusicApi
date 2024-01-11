@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 
 // DI
 builder.Services.AddScoped<ITrackRepo, TrackRepo>();
+builder.Services.AddScoped<IGenreRepo, GenreRepo>();
 
 var app = builder.Build();
 
