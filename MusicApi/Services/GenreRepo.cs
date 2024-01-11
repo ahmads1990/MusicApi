@@ -44,8 +44,7 @@ namespace MusicApi.Services
             if (genre.Id <= 0)
                 throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
-            if (!CheckGenreExist(genre.Id))
-                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
+            if (!CheckGenreExist(genre.Id)) return null;
 
             var updatedGenre = _dbContext.Genres.Update(genre);
             _dbContext.SaveChanges();
@@ -60,8 +59,7 @@ namespace MusicApi.Services
             if (genre.Id <= 0)
                 throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
-            if (!CheckGenreExist(genre.Id))
-                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
+            if (!CheckGenreExist(genre.Id)) return null;
 
             var updatedGenre = _dbContext.Genres.Remove(genre);
             _dbContext.SaveChanges();

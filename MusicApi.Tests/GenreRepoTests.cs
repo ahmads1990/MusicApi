@@ -171,16 +171,15 @@ namespace MusicApi.Tests
             Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
         }
         [Test]
-        public void UpdateGenre_InvaliNoExistingGenreId_Throws()
+        public void UpdateGenre_InvaliNoExistingGenreId_Null()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
             var toUpdateGenre = new Genre { Id = nonExistingId, Name = "genreName" };
 
-            var exception = Assert.Throws<ArgumentException>(() =>
-                genreRepo.UpdateGenre(toUpdateGenre));
+            var result = genreRepo.UpdateGenre(toUpdateGenre);
 
-            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
+            Assert.That(result, Is.Null);
         }
         // Delete Track
         [Test]
@@ -213,10 +212,9 @@ namespace MusicApi.Tests
             genreRepo = new GenreRepo(appDbContext);
             var toDeleteGenre = new Genre { Id = nonExistingId, Name = "trackName" };
 
-            var exception = Assert.Throws<ArgumentException>(() =>
-                genreRepo.DeleteGenre(toDeleteGenre));
+            var result = genreRepo.DeleteGenre(toDeleteGenre);
 
-            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
+            Assert.That(result, Is.Null);
         }
     }
 }
