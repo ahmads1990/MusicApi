@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
 using MusicApi.StaticData;
+using NuGet.Frameworks;
 using NUnit.Framework.Internal;
 
 namespace MusicApi.Tests
@@ -179,10 +180,9 @@ namespace MusicApi.Tests
             trackRepo = new TrackRepo(appDbContext);
             var toUpdateTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
-            var exception = Assert.Throws<ArgumentException>(() =>
-                trackRepo.UpdateTrack(toUpdateTrack));
+            var result = trackRepo.UpdateTrack(toUpdateTrack);
 
-            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
+            Assert.That(result, Is.Null);
         }
         // Delete Track
         [Test]
@@ -215,10 +215,9 @@ namespace MusicApi.Tests
             trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
-            var exception = Assert.Throws<ArgumentException>(() =>
-                trackRepo.DeleteTrack(toDeleteTrack));
+            var result = trackRepo.DeleteTrack(toDeleteTrack);
 
-            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
+            Assert.That(result, Is.Null);
         }
     }
 }

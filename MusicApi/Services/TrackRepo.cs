@@ -43,9 +43,8 @@ namespace MusicApi.Services
 
             if (track.Id <= 0)
                 throw new ArgumentException(ExceptionMessages.InvalidEntityId);
-            
-            if (!CheckTrackExist(track.Id))
-                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
+
+            if (!CheckTrackExist(track.Id)) return null;
 
             var updatedTrack = _dbContext.Tracks.Update(track);
             _dbContext.SaveChanges();
@@ -60,8 +59,7 @@ namespace MusicApi.Services
             if (track.Id <= 0)
                 throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
-            if (!CheckTrackExist(track.Id))
-                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
+            if (!CheckTrackExist(track.Id)) return null;
 
             var deletedTrack = _dbContext.Tracks.Remove(track);
             _dbContext.SaveChanges();
