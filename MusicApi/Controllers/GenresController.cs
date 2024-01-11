@@ -32,7 +32,7 @@ namespace MusicApi.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest($"Invalid genre data: {ex.Message}");
+                return BadRequest($"Invalid request: {ex.Message}");
             }
         }
         [HttpPut("")]

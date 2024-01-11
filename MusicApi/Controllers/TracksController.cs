@@ -34,7 +34,7 @@ namespace MusicApi.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest($"Invalid track data: {ex.Message}");
+                return BadRequest($"Invalid request: {ex.Message}");
             }
         }
         [HttpPut("")]
