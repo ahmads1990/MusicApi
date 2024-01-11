@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace MusicApi.Controllers
@@ -21,7 +22,12 @@ namespace MusicApi.Controllers
         [HttpGet("{trackId}")]
         public async Task<IActionResult> GetTrackById(int trackId)
         {
-            return Ok(await _trackRepo.GetByIdAsync(trackId));
+            var track = await _trackRepo.GetByIdAsync(trackId);
+
+            if (track == null)
+                return NotFound(ExceptionMessages.EntityDoesntExist);
+
+            return Ok(track);
         }
         [HttpPost("")]
         public async Task<IActionResult> CreateNewTrack([FromBody] Track newTrack)
@@ -43,6 +49,10 @@ namespace MusicApi.Controllers
             try
             {
                 var updatedTrack = _trackRepo.UpdateTrack(newTrack);
+
+                if (updatedTrack == null)
+                    return NotFound(ExceptionMessages.EntityDoesntExist);
+
                 return Ok(updatedTrack);
             }
             catch (ArgumentException ex)
@@ -56,6 +66,10 @@ namespace MusicApi.Controllers
             try
             {
                 var deletedTrack = _trackRepo.DeleteTrack(track);
+
+                if (deletedTrack == null)
+                    return NotFound(ExceptionMessages.EntityDoesntExist);
+
                 return Ok(deletedTrack);
             }
             catch (ArgumentException ex)
