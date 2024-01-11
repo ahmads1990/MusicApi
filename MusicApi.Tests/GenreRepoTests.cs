@@ -1,14 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
-using MusicApi.Services;
-using MusicApi.Services.Interfaces;
 using MusicApi.StaticData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicApi.Tests
 {
