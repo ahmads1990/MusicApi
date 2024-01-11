@@ -18,6 +18,7 @@ namespace MusicApi.Tests
         ITrackRepo trackRepo;
         SqliteConnection connection;
         static int seedDataCount = 5;
+        static int nonExistingId = 1000;
         public IEnumerable<Track> GetProductsSeedData()
         {
             return new List<Track>()
@@ -181,7 +182,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var toUpdateTrack = new Track { Id = 1000, Name = "trackName" };
+            var toUpdateTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.UpdateTrack(toUpdateTrack));
@@ -217,7 +218,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var toDeleteTrack = new Track { Id = 1000, Name = "trackName" };
+            var toDeleteTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.DeleteTrack(toDeleteTrack));
