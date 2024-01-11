@@ -25,8 +25,11 @@ namespace MusicApi.Services
         }
         public async Task<Genre> CreateNewGenre(Genre newGenre)
         {
-            if (newGenre == null || newGenre.Id != 0 || newGenre.Name == null)
-                throw new ArgumentException("Invalid Genre data");
+            if (newGenre == null || string.IsNullOrEmpty(newGenre.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
+
+            if (newGenre.Id != 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
             var createdGenre = await _dbContext.Genres.AddAsync(newGenre);
             await _dbContext.SaveChangesAsync();
@@ -35,12 +38,14 @@ namespace MusicApi.Services
         }
         public Genre UpdateGenre(Genre genre)
         {
-            if (genre == null || genre.Id == 0 || genre.Name == null)
-                throw new ArgumentException("Invalid Genre data");
+            if (genre == null || string.IsNullOrEmpty(genre.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
 
+            if (genre.Id <= 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
             if (!CheckGenreExist(genre.Id))
-                throw new ArgumentException("Genre does not exist");
+                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
 
             var updatedGenre = _dbContext.Genres.Update(genre);
             _dbContext.SaveChanges();
@@ -49,12 +54,14 @@ namespace MusicApi.Services
         }
         public Genre DeleteGenre(Genre genre)
         {
-            if (genre == null || genre.Id == 0 || genre.Name == null)
-                throw new ArgumentException("Invalid Genre data");
+            if (genre == null || string.IsNullOrEmpty(genre.Name))
+                throw new ArgumentException(ExceptionMessages.InvalidEntityData);
 
+            if (genre.Id <= 0)
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
             if (!CheckGenreExist(genre.Id))
-                throw new ArgumentException("Genre does not exist");
+                throw new ArgumentException(ExceptionMessages.EntityDoesntExist);
 
             var updatedGenre = _dbContext.Genres.Remove(genre);
             _dbContext.SaveChanges();

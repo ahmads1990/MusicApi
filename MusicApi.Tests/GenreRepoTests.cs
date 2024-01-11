@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
 using MusicApi.Services;
 using MusicApi.Services.Interfaces;
+using MusicApi.StaticData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,7 @@ namespace MusicApi.Tests
         IGenreRepo genreRepo;
         SqliteConnection connection;
         static int seedDataCount = 5;
-        static string exceptionInvalidData = "Invalid Genre data";
-        static string exceptionGenreNotExist = "Genre does not exist";
+        static int nonExistingId = 1000;
         public IEnumerable<Genre> GetProductsSeedData()
         {
             return new List<Genre>()
@@ -119,15 +119,15 @@ namespace MusicApi.Tests
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
-            var newGenre = new Genre { Name = null };
+            var newGenre = new Genre { Name = "" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
                 await genreRepo.CreateNewGenre(newGenre));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public async Task CreateNewGenre_InvalidGenreId_Throws()
+        public async Task CreateNewGenre_InvalidFormatGenreId_Throws()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
@@ -136,7 +136,7 @@ namespace MusicApi.Tests
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
                  await genreRepo.CreateNewGenre(newGenre));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
         }
         // Update
         [Test]
@@ -163,10 +163,10 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 genreRepo.UpdateGenre(toUpdateGenre));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionInvalidData));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public void UpdateGenre_InvalidGenreId_Throws()
+        public void UpdateGenre_InvaliFormatdGenreId_Throws()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
@@ -175,7 +175,19 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 genreRepo.UpdateGenre(toUpdateGenre));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionGenreNotExist));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
+        }
+        [Test]
+        public void UpdateGenre_InvaliNoExistingGenreId_Throws()
+        {
+            // Arrange
+            genreRepo = new GenreRepo(appDbContext);
+            var toUpdateGenre = new Genre { Id = nonExistingId, Name = "genreName" };
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                genreRepo.UpdateGenre(toUpdateGenre));
+
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
         }
         // Delete Track
         [Test]
@@ -190,7 +202,7 @@ namespace MusicApi.Tests
             Assert.That(result.Id, Is.EqualTo(toDeleteGenre.Id));
         }
         [Test]
-        public void DeleteGenre_InvalidGenreId_Throws()
+        public void DeleteGenre_InvalidFormatGenreId_Throws()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
@@ -199,7 +211,19 @@ namespace MusicApi.Tests
             var exception = Assert.Throws<ArgumentException>(() =>
                 genreRepo.DeleteGenre(toDeleteGenre));
 
-            Assert.That(exception.Message, Is.EqualTo(exceptionGenreNotExist));
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityId));
+        }
+        [Test]
+        public void DeleteGenre_InvalidNonExistingGenreId_Throws()
+        {
+            // Arrange
+            genreRepo = new GenreRepo(appDbContext);
+            var toDeleteGenre = new Genre { Id = nonExistingId, Name = "trackName" };
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                genreRepo.DeleteGenre(toDeleteGenre));
+
+            Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.EntityDoesntExist));
         }
     }
 }
