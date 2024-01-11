@@ -22,10 +22,11 @@ namespace MusicApi.Controllers
             return Ok(await _genreRepo.GetByIdAsync(genreId));
         }
         [HttpPost("")]
-        public async Task<IActionResult> CreateNewGenre([FromBody] Genre newGenre)
+        public async Task<IActionResult> CreateNewGenre([FromBody] GenreDto newGenreDto)
         {
             try
             {
+                var newGenre = new Genre() { Id = newGenreDto.Id, Name = newGenreDto.Name };
                 var createdGenre = await _genreRepo.CreateNewGenre(newGenre);
 
                 return Ok(createdGenre);
