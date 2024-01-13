@@ -30,13 +30,18 @@ namespace MusicApi.Controllers
             return Ok(track);
         }
         [HttpPost("")]
-        public async Task<IActionResult> CreateNewTrack([FromBody] Track newTrack)
+        public async Task<IActionResult> CreateNewTrack([FromBody] TrackDto newTrackDto)
         {
             try
             {
+                // First map to domain model then pass it to services
+                var newTrack = newTrackDto.Adapt<Track>();
+
                 var createdTrack = await _trackRepo.CreateNewTrack(newTrack);
 
-                return Ok(createdTrack);
+                // Map resulting domain model back to Dto for trasnfer
+                var responseDto = createdTrack.Adapt<TrackDto>();
+                return Ok(responseDto);
             }
             catch (ArgumentException ex)
             {
@@ -44,16 +49,18 @@ namespace MusicApi.Controllers
             }
         }
         [HttpPut("")]
-        public IActionResult UpdateTrack([FromBody] Track newTrack)
+        public IActionResult UpdateTrack([FromBody] TrackDto newTrackDto)
         {
             try
             {
+                var newTrack = newTrackDto.Adapt<Track>();
                 var updatedTrack = _trackRepo.UpdateTrack(newTrack);
 
                 if (updatedTrack == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
 
-                return Ok(updatedTrack);
+                var responseDto = updatedTrack.Adapt<TrackDto>();
+                return Ok(responseDto);
             }
             catch (ArgumentException ex)
             {
@@ -61,16 +68,19 @@ namespace MusicApi.Controllers
             }
         }
         [HttpDelete("")]
-        public IActionResult DeleteTrack([FromBody] Track track)
+        public IActionResult DeleteTrack([FromBody] TrackDto TrackDto)
         {
             try
             {
+                var track = TrackDto.Adapt<Track>();
+                track.Genres = null;
                 var deletedTrack = _trackRepo.DeleteTrack(track);
 
                 if (deletedTrack == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
 
-                return Ok(deletedTrack);
+                var responseDto = deletedTrack.Adapt<TrackDto>();
+                return Ok(responseDto);
             }
             catch (ArgumentException ex)
             {

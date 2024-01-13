@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Mapster;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MusicApi.Controllers;
+using MusicApi.Dtos;
 using MusicApi.Models;
 using MusicApi.StaticData;
 using System;
@@ -70,11 +72,14 @@ namespace MusicApi.Tests
         [Test]
         public async Task Post_CreateNewTrack_ValidData_Ok()
         {
-            var track = new Track { Name = "track" };
+            // the incoming do from the "request" for the controller
+            var trackDto = new TrackDto { Name = "track" };
+            // map it to domain model for the mock repo to return it
+            var track = trackDto.Adapt<Track>();
             trackRepoMock.Setup(s => s.CreateNewTrack(It.IsAny<Track>()))
                 .ReturnsAsync(track);
 
-            var result = await tracksController.CreateNewTrack(track);
+            var result = await tracksController.CreateNewTrack(trackDto);
 
             trackRepoMock.Verify(x => x.CreateNewTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -82,11 +87,11 @@ namespace MusicApi.Tests
         [Test]
         public async Task Post_CreateNewTrack_InValidData_BadRequest()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
             trackRepoMock.Setup(s => s.CreateNewTrack(It.IsAny<Track>()))
                 .ThrowsAsync(new ArgumentException());
 
-            var result = await tracksController.CreateNewTrack(track);
+            var result = await tracksController.CreateNewTrack(trackDto);
 
             trackRepoMock.Verify(x => x.CreateNewTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -95,11 +100,12 @@ namespace MusicApi.Tests
         [Test]
         public void Put_UpdateTrack_ValidData_Ok()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "track" };
+            var track = trackDto.Adapt<Track>();
             trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()))
                 .Returns(track);
 
-            var result = tracksController.UpdateTrack(track);
+            var result = tracksController.UpdateTrack(trackDto);
 
             trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -107,10 +113,10 @@ namespace MusicApi.Tests
         [Test]
         public void Put_UpdateTrack_NonExsitingData_NotFound()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
             trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()));
 
-            var result = tracksController.UpdateTrack(track);
+            var result = tracksController.UpdateTrack(trackDto);
 
             trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -118,11 +124,11 @@ namespace MusicApi.Tests
         [Test]
         public void Put_UpdateTrack_InValidData_BadRequest()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
             trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()))
                 .Throws(new ArgumentException());
 
-            var result = tracksController.UpdateTrack(track);
+            var result = tracksController.UpdateTrack(trackDto);
 
             trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -131,11 +137,12 @@ namespace MusicApi.Tests
         [Test]
         public void Delete_DeleteTrack_ValidData_Ok()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
+            var track = trackDto.Adapt<Track>();
             trackRepoMock.Setup(s => s.DeleteTrack(It.IsAny<Track>()))
                 .Returns(track);
 
-            var result = tracksController.DeleteTrack(track);
+            var result = tracksController.DeleteTrack(trackDto);
 
             trackRepoMock.Verify(x => x.DeleteTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -143,10 +150,10 @@ namespace MusicApi.Tests
         [Test]
         public void Delete_DeleteTrack_NoExsitingData_NotFound()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
             trackRepoMock.Setup(s => s.DeleteTrack(It.IsAny<Track>()));
 
-            var result = tracksController.DeleteTrack(track);
+            var result = tracksController.DeleteTrack(trackDto);
 
             trackRepoMock.Verify(x => x.DeleteTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -154,11 +161,11 @@ namespace MusicApi.Tests
         [Test]
         public void Delete_DeleteTrack_InValidData_BadRequest()
         {
-            var track = new Track { Name = "" };
+            var trackDto = new TrackDto { Name = "" };
             trackRepoMock.Setup(s => s.DeleteTrack(It.IsAny<Track>()))
                 .Throws(new ArgumentException());
 
-            var result = tracksController.DeleteTrack(track);
+            var result = tracksController.DeleteTrack(trackDto);
 
             trackRepoMock.Verify(x => x.DeleteTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());

@@ -6,6 +6,8 @@ namespace MusicApi
     {
         public void Register(TypeAdapterConfig config)
         {
+            // for nested mapping
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
             // testing custom config rules
             //config
             //    .NewConfig<Genre, GenreDto>()
