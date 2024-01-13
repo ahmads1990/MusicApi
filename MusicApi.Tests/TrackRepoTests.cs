@@ -74,9 +74,9 @@ namespace MusicApi.Tests
             // Assert
             Assert.That(result.Count(), Is.EqualTo(seedDataCount));
         }
-        // GetById
+        // GetByIdAsync
         [Test]
-        public async Task GetById_ValidId_ValidTrack()
+        public async Task GetByIdAsync_ValidId_ValidTrack()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
@@ -88,13 +88,37 @@ namespace MusicApi.Tests
             Assert.That(result.Id, Is.EqualTo(expectedTrack.Id));
         }
         [Test]
-        public async Task GetById_InvalidId_Null()
+        public async Task GetByIdAsync_InvalidId_Null()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             int testId = -1;
             // Act
             var result = await trackRepo.GetByIdAsync(testId);
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+        // GetById
+        [Test]
+        public void GetById_ValidId_ValidTrack()
+        {
+            // Arrange
+            trackRepo = new TrackRepo(appDbContext);
+            int testId = 1;
+            var expectedTrack = GetProductsSeedData().FirstOrDefault(p => p.Id == testId);
+            // Act
+            var result = trackRepo.GetById(testId);
+            // Assert
+            Assert.That(result.Id, Is.EqualTo(expectedTrack.Id));
+        }
+        [Test]
+        public void GetById_InvalidId_Null()
+        {
+            // Arrange
+            trackRepo = new TrackRepo(appDbContext);
+            int testId = -1;
+            // Act
+            var result = trackRepo.GetById(testId);
             // Assert
             Assert.That(result, Is.Null);
         }

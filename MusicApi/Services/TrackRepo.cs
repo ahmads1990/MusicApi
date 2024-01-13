@@ -15,6 +15,10 @@ namespace MusicApi.Services
                                 .Include(t=>t.Genres)
                                 .ToListAsync();
         }
+        public Track GetById(int id)
+        {
+            return _dbContext.Tracks.FirstOrDefault(t => t.Id == id);
+        }
         public async Task<Track> GetByIdAsync(int id)
         {
             return await _dbContext.Tracks.FirstOrDefaultAsync(t => t.Id == id);
