@@ -1,4 +1,6 @@
+using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Mapster
+// Tell Mapster to scan this assambly searching for the Mapster.IRegister classes and execute them
+TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
