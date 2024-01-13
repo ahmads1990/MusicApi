@@ -23,6 +23,10 @@ namespace MusicApi.Controllers
         public async Task<IActionResult> GetGenreById(int genreId)
         {
             var genre = await _genreRepo.GetByIdAsync(genreId);
+
+            if (genre == null)
+                return NotFound(ExceptionMessages.EntityDoesntExist);
+
             var responseDto = genre.Adapt<GenreDto>();
             return Ok(responseDto);
         }
@@ -52,6 +56,9 @@ namespace MusicApi.Controllers
                 var newGenre = newGenreDto.Adapt<Genre>();
                 var updatedGenre = _genreRepo.UpdateGenre(newGenre);
 
+                if (updatedGenre == null)
+                    return NotFound(ExceptionMessages.EntityDoesntExist);
+
                 var responseDto = updatedGenre.Adapt<GenreDto>();
                 return Ok(responseDto);
             }
@@ -67,6 +74,9 @@ namespace MusicApi.Controllers
             {
                 var genre = genreDto.Adapt<Genre>();
                 var deletedGenre = _genreRepo.DeleteGenre(genre);
+
+                if (deletedGenre == null)
+                    return NotFound(ExceptionMessages.EntityDoesntExist);
 
                 var responseDto = deletedGenre.Adapt<GenreDto>();
                 return Ok(deletedGenre);
