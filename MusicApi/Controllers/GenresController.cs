@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MusicApi.Models;
 
 namespace MusicApi.Controllers
 {
@@ -14,22 +15,29 @@ namespace MusicApi.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetAllGenres()
         {
-            return Ok(await _genreRepo.GetAllAsync());
+            var genres = await _genreRepo.GetAllAsync();
+            var responseDto = genres.Adapt<IEnumerable<GenreDto>>();
+            return Ok(responseDto);
         }
         [HttpGet("{genreId}")]
         public async Task<IActionResult> GetGenreById(int genreId)
         {
-            return Ok(await _genreRepo.GetByIdAsync(genreId));
+            var genre = await _genreRepo.GetByIdAsync(genreId);
+            var responseDto = genre.Adapt<GenreDto>();
+            return Ok(responseDto);
         }
         [HttpPost("")]
         public async Task<IActionResult> CreateNewGenre([FromBody] GenreDto newGenreDto)
         {
             try
             {
-                var newGenre = new Genre() { Id = newGenreDto.Id, Name = newGenreDto.Name };
+                // First map to domain model then pass it to services
+                var newGenre = newGenreDto.Adapt<Genre>();
                 var createdGenre = await _genreRepo.CreateNewGenre(newGenre);
 
-                return Ok(createdGenre);
+                // Map resulting domain model back to Dto for trasnfer
+                var responseDto = createdGenre.Adapt<GenreDto>();
+                return Ok(responseDto);
             }
             catch (ArgumentException ex)
             {
@@ -37,12 +45,15 @@ namespace MusicApi.Controllers
             }
         }
         [HttpPut("")]
-        public IActionResult UpdateGenre([FromBody] Genre newGenre)
+        public IActionResult UpdateGenre([FromBody] GenreDto newGenreDto)
         {
             try
             {
+                var newGenre = newGenreDto.Adapt<Genre>();
                 var updatedGenre = _genreRepo.UpdateGenre(newGenre);
-                return Ok(updatedGenre);
+
+                var responseDto = updatedGenre.Adapt<GenreDto>();
+                return Ok(responseDto);
             }
             catch (ArgumentException ex)
             {
@@ -50,11 +61,14 @@ namespace MusicApi.Controllers
             }
         }
         [HttpDelete("")]
-        public IActionResult DeleteGenre([FromBody] Genre genre)
+        public IActionResult DeleteGenre([FromBody] GenreDto genreDto)
         {
             try
             {
+                var genre = genreDto.Adapt<Genre>();
                 var deletedGenre = _genreRepo.DeleteGenre(genre);
+
+                var responseDto = deletedGenre.Adapt<GenreDto>();
                 return Ok(deletedGenre);
             }
             catch (ArgumentException ex)
