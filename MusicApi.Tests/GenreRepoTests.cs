@@ -71,6 +71,33 @@ namespace MusicApi.Tests
             // Assert
             Assert.That(result.Count(), Is.EqualTo(seedDataCount));
         }
+        // GetAllWithIdAsync
+        [Test]
+        public async Task GetAllWithIdAsync_ExistingIds_CountEqualQuery()
+        {
+            // Arrange
+            int queryExistingCount = 3;
+            List<int> genreIdQuery = new List<int>() { 1, 2, 3 };
+            genreRepo = new GenreRepo(appDbContext);
+            // Act
+            var result = await genreRepo.GetAllWithIdAsync(genreIdQuery);
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(queryExistingCount));
+        }
+        [Test]
+        public async Task GetAllWithIdAsync_PartiallyExistingIds_CountEqualQuery()
+        {
+            // Arrange
+            int queryExistingCount = 2;
+            List<int> genreIdQuery = new List<int>() { -1, 2, 3 };
+            genreRepo = new GenreRepo(appDbContext);
+            // Act
+            var result = await genreRepo.GetAllWithIdAsync(genreIdQuery);
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(queryExistingCount));
+        }
         // GetById
         [Test]
         public async Task GetById_ValidId_ValidGenre()

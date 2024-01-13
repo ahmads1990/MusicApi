@@ -15,6 +15,12 @@ namespace MusicApi.Services
         {
             return await _dbContext.Genres.ToListAsync();
         }
+        public async Task<IEnumerable<Genre>> GetAllWithIdAsync(IEnumerable<int> genreIds)
+        {
+            return await _dbContext.Genres
+                .Where(g => genreIds.Contains(g.Id))
+                .ToListAsync();
+        }
         public async Task<Genre> GetByIdAsync(int id)
         {
             return await _dbContext.Genres.FirstOrDefaultAsync(g => g.Id == id);
