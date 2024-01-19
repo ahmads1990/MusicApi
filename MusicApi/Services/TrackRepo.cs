@@ -17,11 +17,15 @@ namespace MusicApi.Services
         }
         public Track GetById(int id)
         {
-            return _dbContext.Tracks.FirstOrDefault(t => t.Id == id);
+            return _dbContext.Tracks
+                .Include(t=>t.Genres)
+                .FirstOrDefault(t => t.Id == id);
         }
         public async Task<Track> GetByIdAsync(int id)
         {
-            return await _dbContext.Tracks.FirstOrDefaultAsync(t => t.Id == id);
+            return await _dbContext.Tracks
+                .Include(t => t.Genres)
+                .FirstOrDefaultAsync(t => t.Id == id);       
         }
         public bool CheckTrackExist(int id)
         {

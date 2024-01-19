@@ -59,15 +59,28 @@ namespace MusicApi.Controllers
             }
         }
         [HttpPut("")]
-        public IActionResult UpdateTrack([FromBody] TrackDto newTrackDto)
+        public async Task<IActionResult> UpdateTrack([FromBody] TrackDto updatedTrackDto)
         {
             try
             {
-                var newTrack = newTrackDto.Adapt<Track>();
-                var updatedTrack = _trackRepo.UpdateTrack(newTrack);
-
-                if (updatedTrack == null)
+                // query database for the track to be updated
+                var trackToBeUpdated = await _trackRepo.GetByIdAsync(updatedTrackDto.Id);
+                if (trackToBeUpdated == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
+
+                // query attached genres ids to ensure all exist in the database
+                var genres = await _genreRepo.GetAllWithIdAsync(updatedTrackDto.Genres.Select(g => g.Id).ToList());
+
+                // compare attached genres and returned from database
+                if(genres.Count() != updatedTrackDto.Genres.Count())
+                    throw new ArgumentException("Check genres data");
+
+                // update the fields from the dto manually
+                trackToBeUpdated.Name = updatedTrackDto.Name;
+                trackToBeUpdated.Genres.Clear();
+                trackToBeUpdated.Genres = (ICollection<Genre>)genres;
+
+                var updatedTrack = _trackRepo.UpdateTrack(trackToBeUpdated);
 
                 var responseDto = updatedTrack.Adapt<TrackDto>();
                 return Ok(responseDto);

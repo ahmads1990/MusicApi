@@ -104,38 +104,50 @@ namespace MusicApi.Tests
         }
         // UpdateTrack
         [Test]
-        public void Put_UpdateTrack_ValidData_Ok()
+        public async Task Put_UpdateTrack_ValidData_Ok()
         {
-            var trackDto = new TrackDto { Name = "track" };
+            var trackDto = new TrackDto { Name = "track", Genres = new List<GenreDto>() };
             var track = trackDto.Adapt<Track>();
+            // track repo returns found track
+            trackRepoMock.Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(track);
+
+            // track repo updates track correctly and return updated track
             trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()))
                 .Returns(track);
 
-            var result = tracksController.UpdateTrack(trackDto);
+            var result = await tracksController.UpdateTrack(trackDto);
 
             trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
         [Test]
-        public void Put_UpdateTrack_NonExsitingData_NotFound()
+        public async Task Put_UpdateTrack_NonExsitingData_NotFound()
         {
-            var trackDto = new TrackDto { Name = "" };
+            var trackDto = new TrackDto { Name = "", Genres = new List<GenreDto>() };
             // not specify a return as (repo couldn't find track and returned null)
-            trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()));
+            trackRepoMock.Setup(s => s.GetByIdAsync(It.IsAny<int>()));
 
-            var result = tracksController.UpdateTrack(trackDto);
+            var result = await tracksController.UpdateTrack(trackDto);
 
-            trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
+            // should throw exception before updateTrack on repo is called
+            trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Never);
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
         [Test]
-        public void Put_UpdateTrack_InValidData_BadRequest()
+        public async Task Put_UpdateTrack_InValidData_BadRequest()
         {
-            var trackDto = new TrackDto { Name = "" };
+            var trackDto = new TrackDto { Id = 1, Name = "", Genres = new List<GenreDto>() };
+            var track = trackDto.Adapt<Track>();
+
+            // track repo returns found track
+            trackRepoMock.Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(track);
+            // track repo tries to update track but found invalid data
             trackRepoMock.Setup(s => s.UpdateTrack(It.IsAny<Track>()))
                 .Throws(new ArgumentException());
 
-            var result = tracksController.UpdateTrack(trackDto);
+            var result = await tracksController.UpdateTrack(trackDto);
 
             trackRepoMock.Verify(x => x.UpdateTrack(It.IsAny<Track>()), Times.Once);
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
