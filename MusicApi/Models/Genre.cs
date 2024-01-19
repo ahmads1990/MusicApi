@@ -9,6 +9,6 @@ namespace MusicApi.Models
         public string Name { get; set; }
         // Nav prop
         [JsonIgnore]
-        public IEnumerable<Track> Tracks { get; set; }
+        public ICollection<Track> Tracks { get; set; }
     }
 }

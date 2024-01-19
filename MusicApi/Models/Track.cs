@@ -7,6 +7,6 @@ namespace MusicApi.Models
         public int Id { get; set; }
         public string Name { get; set; }
         // Nav prop
-        public IEnumerable<Genre> Genres { get; set; }
+        public ICollection<Genre> Genres { get; set; }
     }
 }

@@ -45,7 +45,7 @@ namespace MusicApi.Controllers
                 // check returned list to be equal to attached one (throw error or attach it)
                 if (newTrack.Genres.Count() != genres.Count())
                     throw new ArgumentException("Check genres data");
-                newTrack.Genres = genres;
+                newTrack.Genres = (ICollection<Genre>)genres;
 
                 var createdTrack = await _trackRepo.CreateNewTrack(newTrack);
 
