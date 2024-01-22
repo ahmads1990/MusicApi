@@ -4,5 +4,6 @@
     {
         Task<AuthModel> RegisterUserAsync(RegisterModel registerModel);
         Task<AuthModel> LoginUserAsync(LoginModel loginModel);
+        Task<string> AddClaimAsync(AddClaimModel claimModel);
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MusicApi.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -76,6 +77,28 @@ namespace MusicApi.Services
             authModel.ExpiresOn=jwtToken.ValidTo;
 
             return authModel;
+        }
+        public async Task<string> AddClaimAsync(AddClaimModel claimModel)
+        {
+            var user = await _userManager.FindByIdAsync(claimModel.UserId);
+
+            //check first if user with that id exists
+            if (user is null)
+                return "Invalid user ID";
+
+            // claim type exists in allowed types
+            if (!CustomClaimTypes.ALLOWEDTYPES.Contains(claimModel.ClaimType))
+                return "Invalid claim type not allowed";
+           
+            // check user claims to see if user has this claim already
+            var claims = await _userManager.GetClaimsAsync(user);
+            if(claims.FirstOrDefault(c=>c.Type.Equals(claimModel.ClaimType)) != null)
+                return "User already assigned to this claim";
+
+            // try to add the claim to user
+            var result = await _userManager.AddClaimAsync(user, new Claim(claimModel.ClaimType, claimModel.ClaimValue));
+            
+            return result.Succeeded ? string.Empty : "Something went wrong";
         }
         private async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
         {

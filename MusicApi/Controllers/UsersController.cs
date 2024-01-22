@@ -36,5 +36,15 @@ namespace MusicApi.Controllers
             //Todo send confirmation mail
             return Ok(result);
         }
+        [HttpPost("AddClaim")]
+        public async Task<IActionResult> AddRoleAsync(AddClaimModel claimModel)
+        {
+            var result = await _authService.AddClaimAsync(claimModel);
+
+            if (!string.IsNullOrEmpty(result))
+                return BadRequest(result);
+
+            return Ok(claimModel);
+        }
     }
 }
