@@ -42,7 +42,7 @@ namespace MusicApi.Services
             }
 
             // user creation went ok then create token and send it back
-            var jwtToken = await CreateJwtToken(user);
+            var jwtToken = await CreateJwtTokenAsync(user);
 
             return new AuthModel
             {
@@ -65,7 +65,7 @@ namespace MusicApi.Services
                 return authModel;
             }
 
-            var jwtToken = await CreateJwtToken(user);
+            var jwtToken = await CreateJwtTokenAsync(user);
             var claims = await _userManager.GetClaimsAsync(user);
 
             authModel.IsAuthenticated = true;
@@ -77,7 +77,7 @@ namespace MusicApi.Services
 
             return authModel;
         }
-        private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
+        private async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
         {
             if (user is null) return null;
             // get user claims
