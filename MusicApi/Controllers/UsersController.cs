@@ -14,8 +14,8 @@ namespace MusicApi.Controllers
             _authService = authService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel registerModel)
+        [HttpPost("Register")]
+        public async Task<IActionResult> RegisterAsync(RegisterModel registerModel)
         {
             var result = await _authService.RegisterUserAsync(registerModel);
 
