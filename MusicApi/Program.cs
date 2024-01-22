@@ -61,6 +61,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITrackRepo, TrackRepo>();
 builder.Services.AddScoped<IGenreRepo, GenreRepo>();
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 var app = builder.Build();
 
 // Use swagger in development environment
