@@ -54,6 +54,29 @@ namespace MusicApi.Services
                 ExpiresOn=jwtToken.ValidTo                         
             };
         }
+        public async Task<AuthModel> LoginUserAsync(LoginModel loginModel)
+        {
+            AuthModel authModel = new AuthModel();
+            // return if email doesn't exist OR email+password don't match
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
+            if(user is null || !await _userManager.CheckPasswordAsync(user, loginModel.Password))
+            {
+                authModel.Message = "Email or Password is incorrect!";
+                return authModel;
+            }
+
+            var jwtToken = await CreateJwtToken(user);
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            authModel.IsAuthenticated = true;
+            authModel.Username = user.UserName;
+            authModel.Email = user.Email;
+            authModel.Claims = claims.Select(c=>c.Type).ToList();
+            authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            authModel.ExpiresOn=jwtToken.ValidTo;
+
+            return authModel;
+        }
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {
             if (user is null) return null;

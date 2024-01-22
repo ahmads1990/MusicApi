@@ -20,7 +20,18 @@ namespace MusicApi.Controllers
             var result = await _authService.RegisterUserAsync(registerModel);
 
             if (!result.IsAuthenticated)
-                return BadRequest(result);
+                return BadRequest(result.Message);
+
+            //Todo send confirmation mail
+            return Ok(result);
+        }
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginAsync(LoginModel loginModel)
+        {
+            var result = await _authService.LoginUserAsync(loginModel);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
 
             //Todo send confirmation mail
             return Ok(result);
