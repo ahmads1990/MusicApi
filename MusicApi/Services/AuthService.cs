@@ -67,8 +67,8 @@ namespace MusicApi.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("uid", user.Id)
             };
-            // merge both claims lists to jwtClaims
-            jwtClaims = (Claim[])jwtClaims.Union(userClaims);
+            // merge both claims lists and jwtClaims to allClaims
+            var allClaims =  jwtClaims.Union(userClaims);
 
             // specify the signing key and algorithm
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));
@@ -78,7 +78,7 @@ namespace MusicApi.Services
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _jwtConfig.Issuer,
                 audience: _jwtConfig.Audience,
-                claims: jwtClaims,
+                claims: allClaims,
                 expires: DateTime.Now.AddHours(_jwtConfig.DurationInHours),
                 signingCredentials: signingCredentials
                 );
