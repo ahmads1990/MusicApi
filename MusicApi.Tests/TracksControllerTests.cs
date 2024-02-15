@@ -75,13 +75,13 @@ namespace MusicApi.Tests
         public async Task Post_CreateNewTrack_ValidData_Ok()
         {
             // the incoming do from the "request" for the controller
-            var trackDto = new TrackDto { Name = "track", Genres = new List<GenreDto>() };
+            var trackDto = new AddTrackDto { Name = "track", Genres = new List<int>() { 1 } };
             // map it to domain model for the mock repo to return it
             var track = trackDto.Adapt<Track>();
             trackRepoMock.Setup(s => s.CreateNewTrack(It.IsAny<Track>()))
                 .ReturnsAsync(track);
             genreRepoMock.Setup(s => s.GetAllWithIdAsync(It.IsAny<IEnumerable<int>>()))
-              .ReturnsAsync(new List<Genre>());
+              .ReturnsAsync(new List<Genre>() { new Genre() });
 
             var result = await tracksController.CreateNewTrack(trackDto);
 
@@ -91,11 +91,11 @@ namespace MusicApi.Tests
         [Test]
         public async Task Post_CreateNewTrack_InValidData_BadRequest()
         {
-            var trackDto = new TrackDto { Name = "", Genres = new List<GenreDto>() };
+            var trackDto = new AddTrackDto { Name = "", Genres = new List<int>() { 1 } };
             trackRepoMock.Setup(s => s.CreateNewTrack(It.IsAny<Track>()))
                 .ThrowsAsync(new ArgumentException());
             genreRepoMock.Setup(s => s.GetAllWithIdAsync(It.IsAny<IEnumerable<int>>()))
-                .ReturnsAsync(new List<Genre>());
+                .ReturnsAsync(new List<Genre>() { new Genre() });
 
             var result = await tracksController.CreateNewTrack(trackDto);
 

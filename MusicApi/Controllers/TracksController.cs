@@ -32,15 +32,17 @@ namespace MusicApi.Controllers
             return Ok(track);
         }
         [HttpPost("")]
-        public async Task<IActionResult> CreateNewTrack([FromBody] TrackDto newTrackDto)
+        public async Task<IActionResult> CreateNewTrack([FromBody] AddTrackDto addTrackDto)
         {
             try
             {
                 // First map to domain model then pass it to services
-                var newTrack = newTrackDto.Adapt<Track>();
+                var newTrack = addTrackDto.Adapt<Track>();
 
                 // check attached genres ensure all exist in the database
-                var genres = await _genreRepo.GetAllWithIdAsync(newTrack.Genres.Select(g=>g.Id).ToList());
+                if (addTrackDto.Genres.Count() == 0) 
+                    return BadRequest(ExceptionMessages.InvalidEntityData);
+                var genres = await _genreRepo.GetAllWithIdAsync(addTrackDto.Genres);
                 
                 // check returned list to be equal to attached one (throw error or attach it)
                 if (newTrack.Genres.Count() != genres.Count())
