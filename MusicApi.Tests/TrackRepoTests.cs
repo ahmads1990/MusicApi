@@ -19,11 +19,11 @@ namespace MusicApi.Tests
         {
             return new List<Track>()
             {
-                new Track { Id = 1, Name = "Track1", Length = 1, TrackPath = "path1", ReleaseDate = DateTime.UtcNow },
-                new Track { Id = 2, Name = "Track2", Length = 3, TrackPath = "path2", ReleaseDate = DateTime.UtcNow.AddDays(-5) },
-                new Track { Id = 3, Name = "Track3", Length = 5, TrackPath = "path3", ReleaseDate = DateTime.UtcNow.AddDays(-10) },
-                new Track { Id = 4, Name = "Track4", Length = 2, TrackPath = "path4", ReleaseDate = DateTime.UtcNow.AddDays(2) },
-                new Track { Id = 5, Name = "Track5", Length = 4, TrackPath = "path5", ReleaseDate = DateTime.UtcNow.AddDays(-2) }
+                new Track { Id = 1, Name = "Track1", LengthInSeconds = 1, TrackPath = "path1", ReleaseDate = DateTime.UtcNow },
+                new Track { Id = 2, Name = "Track2", LengthInSeconds = 3, TrackPath = "path2", ReleaseDate = DateTime.UtcNow.AddDays(-5) },
+                new Track { Id = 3, Name = "Track3", LengthInSeconds = 5, TrackPath = "path3", ReleaseDate = DateTime.UtcNow.AddDays(-10) },
+                new Track { Id = 4, Name = "Track4", LengthInSeconds = 2, TrackPath = "path4", ReleaseDate = DateTime.UtcNow.AddDays(2) },
+                new Track { Id = 5, Name = "Track5", LengthInSeconds = 4, TrackPath = "path5", ReleaseDate = DateTime.UtcNow.AddDays(-2) }
             };
         }
         [SetUp]
