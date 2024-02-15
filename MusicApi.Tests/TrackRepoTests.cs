@@ -15,7 +15,7 @@ namespace MusicApi.Tests
         SqliteConnection connection;
         static int seedDataCount = 5;
         static int nonExistingId = 1000;
-        public IEnumerable<Track> GetProductsSeedData()
+        public IEnumerable<Track> GetTrackSeedData()
         {
             return new List<Track>()
             {
@@ -40,7 +40,7 @@ namespace MusicApi.Tests
             using (var context = new AppDbContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Tracks.AddRange(GetProductsSeedData());
+                context.Tracks.AddRange(GetTrackSeedData());
                 context.SaveChanges();
             }
             // testing context
@@ -81,7 +81,7 @@ namespace MusicApi.Tests
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             int testId = 1;
-            var expectedTrack = GetProductsSeedData().FirstOrDefault(p => p.Id == testId);
+            var expectedTrack = GetTrackSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = await trackRepo.GetByIdAsync(testId);
             // Assert
@@ -105,7 +105,7 @@ namespace MusicApi.Tests
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
             int testId = 1;
-            var expectedTrack = GetProductsSeedData().FirstOrDefault(p => p.Id == testId);
+            var expectedTrack = GetTrackSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = trackRepo.GetById(testId);
             // Assert
@@ -128,7 +128,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var newTrack = GetProductsSeedData().First();
+            var newTrack = GetTrackSeedData().First();
             newTrack.Id = 0;
             newTrack.Name = "NewTrack";
             // Act
@@ -166,7 +166,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var updatedTrack = GetProductsSeedData().First();
+            var updatedTrack = GetTrackSeedData().First();
             updatedTrack.Name = "UpdatedTrack";
             // Act
             var result = trackRepo.UpdateTrack(updatedTrack);
@@ -179,7 +179,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var updatedTrack = GetProductsSeedData().First();
+            var updatedTrack = GetTrackSeedData().First();
             updatedTrack.Name = null;
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -216,7 +216,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
-            var toDeleteTrack = GetProductsSeedData().First();
+            var toDeleteTrack = GetTrackSeedData().First();
             // Act
             var result = trackRepo.DeleteTrack(toDeleteTrack);
             // Assert
