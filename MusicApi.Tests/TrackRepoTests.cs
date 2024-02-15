@@ -137,7 +137,7 @@ namespace MusicApi.Tests
             Assert.That(result.Name, Is.EqualTo(newTrack.Name));
         }
         [Test]
-        public async Task CreateNewTrack_InvalidTrackName_Throws()
+        public void CreateNewTrack_InvalidTrackName_Throws()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);
@@ -149,7 +149,7 @@ namespace MusicApi.Tests
             Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public async Task CreateNewTrack_InvalidFormatTrackId_Throws()
+        public void CreateNewTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
             trackRepo = new TrackRepo(appDbContext);

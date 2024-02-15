@@ -135,7 +135,7 @@ namespace MusicApi.Tests
             Assert.That(result.Name, Is.EqualTo(newGenre.Name));
         }
         [Test]
-        public async Task CreateNewGenre_InvalidGenreName_Throws()
+        public void CreateNewGenre_InvalidGenreName_Throws()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
@@ -147,7 +147,7 @@ namespace MusicApi.Tests
             Assert.That(exception.Message, Is.EqualTo(ExceptionMessages.InvalidEntityData));
         }
         [Test]
-        public async Task CreateNewGenre_InvalidFormatGenreId_Throws()
+        public void CreateNewGenre_InvalidFormatGenreId_Throws()
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
