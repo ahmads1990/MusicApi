@@ -1,4 +1,6 @@
-﻿namespace MusicApi.Services.Interfaces
+﻿using MusicApi.Dtos.Auth;
+
+namespace MusicApi.Services.Interfaces
 {
     public interface IAuthService
     {

@@ -1,4 +1,4 @@
-﻿namespace MusicApi.Dtos
+﻿namespace MusicApi.Dtos.Auth
 {
     public class AuthModel
     {

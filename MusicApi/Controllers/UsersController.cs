@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusicApi.Dtos.Auth;
 
 namespace MusicApi.Controllers
 {
