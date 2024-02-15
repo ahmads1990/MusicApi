@@ -5,7 +5,7 @@ namespace MusicApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class GenresController : Controller
+    public class GenresController : ControllerBase
     {
         private readonly IGenreRepo _genreRepo;
         public GenresController(IGenreRepo genreRepo)

@@ -6,7 +6,7 @@ namespace MusicApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TracksController : Controller
+    public class TracksController : ControllerBase
     {
         private readonly ITrackRepo _trackRepo;
         private readonly IGenreRepo _genreRepo;

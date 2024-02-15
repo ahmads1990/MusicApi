@@ -6,7 +6,7 @@ namespace MusicApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
         private readonly IAuthService _authService;
 
