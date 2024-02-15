@@ -16,11 +16,11 @@ namespace MusicApi.Tests
         {
             return new List<Genre>()
             {
-                new Genre { Id = 1, Name = "Genre1" },
-                new Genre { Id = 2, Name = "Genre2" },
-                new Genre { Id = 3, Name = "Genre3" },
-                new Genre { Id = 4, Name = "Genre4" },
-                new Genre { Id = 5, Name = "Genre5" }
+                new Genre { Id = 1, Name = "Genre1", Description = "Desc1" },
+                new Genre { Id = 2, Name = "Genre2", Description = "Desc2" },
+                new Genre { Id = 3, Name = "Genre3", Description = "Desc3" },
+                new Genre { Id = 4, Name = "Genre4", Description = "Desc4" },
+                new Genre { Id = 5, Name = "Genre5", Description = "Desc5" }
             };
         }
         [SetUp]
@@ -128,7 +128,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
-            var newGenre = new Genre { Name = "newGenre" };
+            var newGenre = new Genre { Name = "newGenre", Description="newDesc" };
             // Act
             var result = await genreRepo.CreateNewGenre(newGenre);
             // Assert
