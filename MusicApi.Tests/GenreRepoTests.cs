@@ -12,7 +12,7 @@ namespace MusicApi.Tests
         SqliteConnection connection;
         static int seedDataCount = 5;
         static int nonExistingId = 1000;
-        public IEnumerable<Genre> GetProductsSeedData()
+        public IEnumerable<Genre> GetGenreSeedData()
         {
             return new List<Genre>()
             {
@@ -37,7 +37,7 @@ namespace MusicApi.Tests
             using (var context = new AppDbContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Genres.AddRange(GetProductsSeedData());
+                context.Genres.AddRange(GetGenreSeedData());
                 context.SaveChanges();
             }
             // testing context
@@ -105,7 +105,7 @@ namespace MusicApi.Tests
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
             int testId = 1;
-            var expectedGenre = GetProductsSeedData().FirstOrDefault(p => p.Id == testId);
+            var expectedGenre = GetGenreSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = await genreRepo.GetByIdAsync(testId);
             // Assert
@@ -164,7 +164,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
-            var toUpdateGenre = GetProductsSeedData().First();
+            var toUpdateGenre = GetGenreSeedData().First();
             toUpdateGenre.Name = "UpdatedGenre";
             // Act
             var result = genreRepo.UpdateGenre(toUpdateGenre);
@@ -177,7 +177,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
-            var toUpdateGenre = GetProductsSeedData().First();
+            var toUpdateGenre = GetGenreSeedData().First();
             toUpdateGenre.Name = null;
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -214,7 +214,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             genreRepo = new GenreRepo(appDbContext);
-            var toDeleteGenre = GetProductsSeedData().First();
+            var toDeleteGenre = GetGenreSeedData().First();
             // Act
             var result = genreRepo.DeleteGenre(toDeleteGenre);
             // Assert
