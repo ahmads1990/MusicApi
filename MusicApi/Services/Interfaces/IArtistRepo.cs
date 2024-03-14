@@ -1,6 +1,6 @@
 ﻿namespace MusicApi.Services.Interfaces
 {
-    public interface IArtistService
+    public interface IArtistRepo
     {
         public Task<IEnumerable<Artist>> GetAllAsync();
         public Artist? GetById(int id);

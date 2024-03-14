@@ -2,11 +2,11 @@
 
 namespace MusicApi.Services
 {
-    public class ArtistService : IArtistService
+    public class ArtistRepo : IArtistRepo
     {
         private readonly AppDbContext _dbContext;
 
-        public ArtistService(AppDbContext dbContext)
+        public ArtistRepo(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
