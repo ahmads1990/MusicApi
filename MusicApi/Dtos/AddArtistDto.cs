@@ -2,7 +2,8 @@
 {
     public class AddArtistDto
     {
+        public string Name { get; set; }
         public string Bio { get; set; }
-        public int Followers { get; set; }
+        public IFormFile ArtistCoverImage { get; set; }
     }
 }
