@@ -32,7 +32,7 @@ namespace MusicApi.Services
         public async Task<Artist?> SearchByNameAsync(string name)
         {
             return await _dbContext.Artists
-                .FirstOrDefaultAsync(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower());
         }
 
         public async Task<bool> CheckArtistExistAsync(int id)
