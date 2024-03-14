@@ -10,7 +10,7 @@ namespace MusicApi.Services
         }
         public DbSet<Track> Tracks { get; set; }
         public DbSet<Genre> Genres { get; set; }
-
+        public DbSet<Artist> Artists { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
