@@ -62,6 +62,8 @@ builder.Services.AddAuthentication(options =>{
 
 builder.Services.AddAuthorization();
 
+// Routing Config
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // DI
 builder.Services.AddScoped<ITrackRepo, TrackRepo>();
