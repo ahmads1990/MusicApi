@@ -1,6 +1,6 @@
 ﻿using Mapster;
 
-namespace MusicApi
+namespace MusicApi.Helpers.Config
 {
     public class MapsterConfigL : IRegister
     {

@@ -1,4 +1,4 @@
-﻿namespace MusicApi.StaticData
+﻿namespace MusicApi.Helpers.Config
 {
     public class JwtConfig
     {
