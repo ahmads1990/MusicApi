@@ -3,16 +3,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MusicApi.Helpers.Config;
+using MusicApi.Helpers.Config.FilesConfig;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// File config
+builder.Services.Configure<TrackFileConfig>(builder.Configuration.GetSection("FileConfig:TrackFileConfig"));
+builder.Services.Configure<AlbumImageFileConfig>(builder.Configuration.GetSection("FileConfig:AlbumImageFileConfig"));
+builder.Services.Configure<UserImageFileConfig>(builder.Configuration.GetSection("FileConfig:UserImageFileConfig"));
 
 // Mapster
 // Tell Mapster to scan this assambly searching for the Mapster.IRegister classes and execute them
