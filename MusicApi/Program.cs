@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MusicApi.Helpers.Config;
 using MusicApi.Helpers.Config.FilesConfig;
+using MusicApi.Services.FileServices;
 using System.Reflection;
 using System.Text;
 
@@ -70,6 +71,7 @@ builder.Services.AddScoped<ITrackRepo, TrackRepo>();
 builder.Services.AddScoped<IGenreRepo, GenreRepo>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 var app = builder.Build();
 
