@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using MusicApi.Helpers;
+using MusicApi.Services.FileServices;
 
 namespace MusicApi.Controllers
 {
@@ -10,10 +12,13 @@ namespace MusicApi.Controllers
     {
         private readonly ITrackRepo _trackRepo;
         private readonly IGenreRepo _genreRepo;
-        public TracksController(ITrackRepo trackRepo, IGenreRepo genreRepo)
+        private readonly IFileService _fileService;
+        private readonly FileTypes fileType = FileTypes.TrackFile;
+        public TracksController(ITrackRepo trackRepo, IGenreRepo genreRepo, IFileService fileService)
         {
             _trackRepo = trackRepo;
             _genreRepo = genreRepo;
+            _fileService = fileService;
         }
         [HttpGet("")]
         public async Task<IActionResult> GetTracks()
@@ -40,18 +45,23 @@ namespace MusicApi.Controllers
                 var newTrack = addTrackDto.Adapt<Track>();
 
                 // check attached genres ensure all exist in the database
-                if (addTrackDto.Genres.Count() == 0) 
+                if (addTrackDto.Genres.Count() == 0)
                     return BadRequest(ExceptionMessages.InvalidEntityData);
                 var genres = await _genreRepo.GetAllWithIdAsync(addTrackDto.Genres);
-                
+
                 // check returned list to be equal to attached one (throw error or attach it)
                 if (newTrack.Genres.Count() != genres.Count())
                     throw new ArgumentException("Check genres data");
                 newTrack.Genres = (ICollection<Genre>)genres;
 
+                // Data file
+                var trackPath = _fileService.SaveFileAndCheckFile(addTrackDto.TrackFile, fileType);
+                if (string.IsNullOrEmpty(trackPath))
+                    return BadRequest("Invalid file data");
+
                 var createdTrack = await _trackRepo.CreateNewTrack(newTrack);
 
-                // Map resulting domain model back to Dto for trasnfer
+                // Map resulting domain model back to Dto for transfer
                 var responseDto = createdTrack.Adapt<TrackDto>();
                 return Ok(responseDto);
             }
@@ -74,7 +84,7 @@ namespace MusicApi.Controllers
                 var genres = await _genreRepo.GetAllWithIdAsync(updatedTrackDto.Genres.Select(g => g.Id).ToList());
 
                 // compare attached genres and returned from database
-                if(genres.Count() != updatedTrackDto.Genres.Count())
+                if (genres.Count() != updatedTrackDto.Genres.Count())
                     throw new ArgumentException("Check genres data");
 
                 // update the fields from the dto manually
