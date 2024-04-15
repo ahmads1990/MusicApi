@@ -73,7 +73,22 @@ builder.Services.AddScoped<IGenreRepo, GenreRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFileService, FileService>();
 
+//Add cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
+
+// Cors
+app.UseCors("AllowAllOrigins");
 
 // Use swagger in development environment
 if (app.Environment.IsDevelopment())
