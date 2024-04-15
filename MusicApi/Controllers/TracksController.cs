@@ -37,7 +37,7 @@ namespace MusicApi.Controllers
             return Ok(track);
         }
         [HttpPost("")]
-        public async Task<IActionResult> CreateNewTrack([FromBody] AddTrackDto addTrackDto)
+        public async Task<IActionResult> CreateNewTrack([FromForm] AddTrackDto addTrackDto)
         {
             try
             {
