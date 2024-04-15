@@ -24,9 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Uploads\Images\Albums\" />
-    <Folder Include="Uploads\Images\Users\" />
-    <Folder Include="Uploads\Tracks\" />
     <Folder Include="wwwroot\Uploads\Images\Albums\" />
     <Folder Include="wwwroot\Uploads\Images\Users\" />
     <Folder Include="wwwroot\Uploads\Tracks\" />

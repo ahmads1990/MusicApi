@@ -48,16 +48,22 @@ namespace MusicApi.Controllers
                 if (addTrackDto.Genres.Count() == 0)
                     return BadRequest(ExceptionMessages.InvalidEntityData);
                 var genres = await _genreRepo.GetAllWithIdAsync(addTrackDto.Genres);
-
+                // check attached track file
+                if (!_fileService.CheckFileSpecs(addTrackDto.TrackFile, fileType))
+                    throw new ArgumentException("Check track data");
                 // check returned list to be equal to attached one (throw error or attach it)
                 if (newTrack.Genres.Count() != genres.Count())
                     throw new ArgumentException("Check genres data");
                 newTrack.Genres = (ICollection<Genre>)genres;
 
                 // Data file
-                var trackPath = _fileService.SaveFileAndCheckFile(addTrackDto.TrackFile, fileType);
-                if (string.IsNullOrEmpty(trackPath))
-                    return BadRequest("Invalid file data");
+                var trackFileSaveDto = await _fileService.SaveTrackFileHLS(addTrackDto.TrackFile, newTrack.Name);
+                if (!trackFileSaveDto.isSaved)
+                    throw new ArgumentException("Error saving file");
+
+                // Update track file props
+                newTrack.TrackPath = trackFileSaveDto.FileSavePathHLS;
+                newTrack.LengthInSeconds = trackFileSaveDto.FileDurationInSeconds;
 
                 var createdTrack = await _trackRepo.CreateNewTrack(newTrack);
 

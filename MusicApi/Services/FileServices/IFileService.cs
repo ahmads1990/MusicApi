@@ -5,7 +5,8 @@ namespace MusicApi.Services.FileServices
 {
     public interface IFileService
     {
-        string SaveFileAndCheckFile(IFormFile file, FileTypes fileType);
-        bool CheckFileSpecs(IFormFile file, FileServiceConfig config);
+        Task<string> SaveImageFile(IFormFile file, FileTypes fileType);
+        Task<TrackFileSaveDto> SaveTrackFileHLS(IFormFile file, string trackNameWithoutExtension);
+        bool CheckFileSpecs(IFormFile file, FileTypes fileType);
     }
 }

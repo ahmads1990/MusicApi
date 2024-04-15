@@ -39,8 +39,11 @@ namespace MusicApi.Controllers
         {
             try
             {
-                // Check and save file
-                string filePath = _fileService.SaveFileAndCheckFile(newArtistDto.ArtistCoverImage, fileType);
+                // Check file
+                if (!_fileService.CheckFileSpecs(newArtistDto.ArtistCoverImage, fileType))
+                    return BadRequest("Invalid file constraints");
+                // Save file
+                string filePath = await _fileService.SaveImageFile(newArtistDto.ArtistCoverImage, fileType);
                 if (string.IsNullOrEmpty(filePath))
                     return BadRequest("Invalid file constraints");
 
