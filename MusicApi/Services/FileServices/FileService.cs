@@ -50,20 +50,21 @@ namespace MusicApi.Services.FileServices
         }
         public async Task<TrackFileSaveDto> SaveTrackFileHLS(IFormFile file, string trackNameWithoutExtension)
         {
-            FileServiceConfig config = _trackFileConfig;
+            TrackFileConfig config = _trackFileConfig;
             TrackFileSaveDto fileSaveDto = new TrackFileSaveDto();
-            // Save path for original file = "rootDir/Uploads/entity/Tracks/"
-            // Save path for hls file = "rootDir/Uploads/entity/Tracks/hls/trackname"
+
+            // Save path for original file = "rootDir/Uploads/entity/Tracks/trackname.mp3"
+            // Save path for hls file = "rootDir/Uploads/entity/Tracks/hls/trackname/trackname.m3u8"
             string rootPath = _webHostEnvironment.WebRootPath;
             string saveDirOriginal = Path.Combine(rootPath, config.SaveDirectory);
-            string saveDirHls = Path.Combine(rootPath, config.SaveDirectory, "hls", trackNameWithoutExtension);
+            string saveDirHls = Path.Combine(rootPath, config.SaveDirectoryHLS, trackNameWithoutExtension);
 
             // Ensure the save directory exists; create it if not
             if (!Directory.Exists(saveDirOriginal)) Directory.CreateDirectory(saveDirOriginal);
             if (!Directory.Exists(saveDirHls)) Directory.CreateDirectory(saveDirHls);
 
             // Modify the file name (file) or leave it as is
-            var fileName = file.FileName;
+            var fileName = trackNameWithoutExtension + Path.GetExtension(file.FileName);
             //var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
             // save path = dir + file name + Extension
@@ -88,7 +89,8 @@ namespace MusicApi.Services.FileServices
                 fileSaveDto.isSaved = true;
                 fileSaveDto.FileSavePathOriginal = savePathOriginal;
                 fileSaveDto.FileDurationInSeconds = trackDuration;
-                fileSaveDto.FileSavePathHLS = Path.Combine(trackNameWithoutExtension, playlistTitle);
+                // The store the path in easier format to request
+                fileSaveDto.FileSavePathHLS = $"{config.SaveDirectoryHLS}/{trackNameWithoutExtension}/{playlistTitle}";
             }
             catch (Exception)
             {
@@ -96,9 +98,33 @@ namespace MusicApi.Services.FileServices
             }
             return fileSaveDto;
         }
-        public async Task<string> ConvertToHls(string inputPath, string trackName, string outputDir)
+        public bool CheckFileSpecs(IFormFile file, FileTypes fileType)
         {
-            string playlistTitle = trackName + ".m3u8";
+            FileServiceConfig config = GetConfigForFileType(fileType);
+
+            // Check file size
+            float fileSize = ByteToMegaByte(file.Length);
+            if (fileSize == 0 || fileSize > config.FileMaxSizeMB)
+                return false;
+
+
+            // Check file extention
+            if (MimeTypes.TryGetExtension(file.ContentType, out var fileExtension))
+            {
+                if (!config.AllowedFileExtensions.Contains(fileExtension))
+                    return false;
+            }
+            else
+                return false;
+
+
+            // Extra for each type
+
+            return true;
+        }
+        private async Task<string> ConvertToHls(string inputPath, string playlistFileName, string outputDir)
+        {
+            string playlistTitle = playlistFileName + ".m3u8";
             var playlistOutputPath = Path.Combine(outputDir, playlistTitle);
             var segmentName = Path.Combine(outputDir, "segment%05d.ts");
 
@@ -173,31 +199,6 @@ namespace MusicApi.Services.FileServices
                 return audioFileDuration;
             }
         }
-        public bool CheckFileSpecs(IFormFile file, FileTypes fileType)
-        {
-            FileServiceConfig config = GetConfigForFileType(fileType);
-
-            // Check file size
-            float fileSize = ByteToMegaByte(file.Length);
-            if (fileSize == 0 || fileSize > config.FileMaxSizeMB)
-                return false;
-
-
-            // Check file extention
-            if (MimeTypes.TryGetExtension(file.ContentType, out var fileExtension))
-            {
-                if (!config.AllowedFileExtensions.Contains(fileExtension))
-                    return false;
-            }
-            else
-                return false;
-
-
-            // Extra for each type
-
-            return true;
-        }
-
         protected float ByteToMegaByte(float bytes) => bytes / 1000000;
         private FileServiceConfig GetConfigForFileType(FileTypes fileType)
         {

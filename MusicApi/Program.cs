@@ -1,6 +1,8 @@
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using MusicApi.Helpers.Config;
 using MusicApi.Helpers.Config.FilesConfig;
@@ -96,6 +98,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".m3u8"] = "application/x-mpegURL";
+provider.Mappings[".ts"] = "video/MP2T";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider,
+    //FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.WebRootPath))
+});
 
 app.UseHttpsRedirection();
 //app.MapIdentityApi<IdentityUser>();

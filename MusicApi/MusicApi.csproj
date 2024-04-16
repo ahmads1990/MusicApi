@@ -26,7 +26,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\Uploads\Images\Albums\" />
     <Folder Include="wwwroot\Uploads\Images\Users\" />
-    <Folder Include="wwwroot\Uploads\Tracks\" />
   </ItemGroup>
 
 </Project>
