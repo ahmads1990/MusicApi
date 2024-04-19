@@ -46,9 +46,9 @@ namespace MusicApi.Tests
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
 
             var okObjectResult = result as OkObjectResult;
-            Assert.That(okObjectResult.Value, Is.InstanceOf<List<Track>>());
+            Assert.That(okObjectResult?.Value, Is.InstanceOf<List<Track>>());
             var emp = okObjectResult.Value as List<Track>;
-            Assert.That(emp.Count, Is.EqualTo(2));
+            Assert.That(emp?.Count, Is.EqualTo(2));
         }
         // GetTrackById
         [Test]
@@ -63,7 +63,7 @@ namespace MusicApi.Tests
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
 
             var okObjectResult = result as OkObjectResult;
-            Assert.That(okObjectResult.Value, Is.InstanceOf<Track>());
+            Assert.That(okObjectResult?.Value, Is.InstanceOf<Track>());
         }
         [Test]
         public async Task Get_GetTrackById_InValidId_NotFound()

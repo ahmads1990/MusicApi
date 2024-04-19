@@ -42,6 +42,7 @@ namespace MusicApi.Tests
             }
             // testing context
             appDbContext = new AppDbContext(options);
+            genreRepo = new GenreRepo(appDbContext);
         }
         [TearDown]
         public void TearDown()
@@ -55,7 +56,7 @@ namespace MusicApi.Tests
         public async Task GetAllGenres_ValidData_NotNull()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             // Act
             var result = await genreRepo.GetAllAsync();
             // Assert
@@ -65,7 +66,7 @@ namespace MusicApi.Tests
         public async Task GetAllGenres_ValidData_CountEqualSeed()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             // Act
             var result = await genreRepo.GetAllAsync();
             // Assert
@@ -78,7 +79,7 @@ namespace MusicApi.Tests
             // Arrange
             int queryExistingCount = 3;
             List<int> genreIdQuery = new List<int>() { 1, 2, 3 };
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             // Act
             var result = await genreRepo.GetAllWithIdAsync(genreIdQuery);
             // Assert
@@ -91,7 +92,7 @@ namespace MusicApi.Tests
             // Arrange
             int queryExistingCount = 2;
             List<int> genreIdQuery = new List<int>() { -1, 2, 3 };
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             // Act
             var result = await genreRepo.GetAllWithIdAsync(genreIdQuery);
             // Assert
@@ -103,19 +104,19 @@ namespace MusicApi.Tests
         public async Task GetById_ValidId_ValidGenre()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             int testId = 1;
             var expectedGenre = GetGenreSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = await genreRepo.GetByIdAsync(testId);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(expectedGenre.Id));
+            Assert.That(result?.Id, Is.EqualTo(expectedGenre?.Id));
         }
         [Test]
         public async Task GetById_InvalidId_Null()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             int testId = -1;
             // Act
             var result = await genreRepo.GetByIdAsync(testId);
@@ -127,7 +128,7 @@ namespace MusicApi.Tests
         public async Task CreateNewGenre_ValidGenre_NewGenre()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var newGenre = new Genre { Name = "newGenre", Description="newDesc" };
             // Act
             var result = await genreRepo.CreateNewGenre(newGenre);
@@ -138,7 +139,7 @@ namespace MusicApi.Tests
         public void CreateNewGenre_InvalidGenreName_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var newGenre = new Genre { Name = "" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -150,7 +151,7 @@ namespace MusicApi.Tests
         public void CreateNewGenre_InvalidFormatGenreId_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var newGenre = new Genre { Id = -1, Name = "newGenre" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -163,22 +164,22 @@ namespace MusicApi.Tests
         public void UpdateGenre_ValidGenre_UpdatedGenre()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var toUpdateGenre = GetGenreSeedData().First();
             toUpdateGenre.Name = "UpdatedGenre";
             // Act
             var result = genreRepo.UpdateGenre(toUpdateGenre);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(toUpdateGenre.Id));
+            Assert.That(result?.Id, Is.EqualTo(toUpdateGenre.Id));
             Assert.That(result.Name, Is.EqualTo(toUpdateGenre.Name));
         }
         [Test]
         public void UpdateGenre_InvalidGenreName_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var toUpdateGenre = GetGenreSeedData().First();
-            toUpdateGenre.Name = null;
+            toUpdateGenre.Name = string.Empty;
 
             var exception = Assert.Throws<ArgumentException>(() =>
                 genreRepo.UpdateGenre(toUpdateGenre));
@@ -189,7 +190,7 @@ namespace MusicApi.Tests
         public void UpdateGenre_InvaliFormatdGenreId_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var toUpdateGenre = new Genre { Id = -1, Name = "genreName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -201,7 +202,7 @@ namespace MusicApi.Tests
         public void UpdateGenre_InvaliNoExistingGenreId_Null()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var toUpdateGenre = new Genre { Id = nonExistingId, Name = "genreName" };
 
             var result = genreRepo.UpdateGenre(toUpdateGenre);
@@ -213,18 +214,18 @@ namespace MusicApi.Tests
         public void DeleteGenre_ValidId_toDeleteGenre()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //   genreRepo = new GenreRepo(appDbContext);
             var toDeleteGenre = GetGenreSeedData().First();
             // Act
             var result = genreRepo.DeleteGenre(toDeleteGenre);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(toDeleteGenre.Id));
+            Assert.That(result?.Id, Is.EqualTo(toDeleteGenre.Id));
         }
         [Test]
         public void DeleteGenre_InvalidFormatGenreId_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            // genreRepo = new GenreRepo(appDbContext);
             var toDeleteGenre = new Genre { Id = -1, Name = "trackName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -236,7 +237,7 @@ namespace MusicApi.Tests
         public void DeleteGenre_InvalidNonExistingGenreId_Throws()
         {
             // Arrange
-            genreRepo = new GenreRepo(appDbContext);
+            //  genreRepo = new GenreRepo(appDbContext);
             var toDeleteGenre = new Genre { Id = nonExistingId, Name = "trackName" };
 
             var result = genreRepo.DeleteGenre(toDeleteGenre);
