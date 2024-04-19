@@ -129,7 +129,7 @@ namespace MusicApi.Tests
         {
             // Arrange
             //  genreRepo = new GenreRepo(appDbContext);
-            var newGenre = new Genre { Name = "newGenre", Description="newDesc" };
+            var newGenre = new Genre { Name = "newGenre", Description = "newDesc" };
             // Act
             var result = await genreRepo.CreateNewGenre(newGenre);
             // Assert

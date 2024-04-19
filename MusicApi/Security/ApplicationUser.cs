@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MusicApi.Security
+﻿namespace MusicApi.Security
 {
     public class ApplicationUser : IdentityUser
     {

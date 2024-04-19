@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic.FileIO;
+﻿using Microsoft.Extensions.Options;
 using MimeKit;
 using MusicApi.Helpers;
 using MusicApi.Helpers.Config.FilesConfig;

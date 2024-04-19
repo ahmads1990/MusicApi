@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MusicApi.Controllers;
@@ -8,12 +7,6 @@ using MusicApi.Dtos;
 using MusicApi.Helpers;
 using MusicApi.Models;
 using MusicApi.Services.FileServices;
-using MusicApi.StaticData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicApi.Tests
 {
@@ -91,7 +84,7 @@ namespace MusicApi.Tests
             // fileServiceMock
             fileServiceMock.Setup(
                 s => s.SaveTrackFileHLS(It.IsAny<IFormFile>(), It.IsAny<string>()))
-                .ReturnsAsync(new TrackFileSaveDto { isSaved = true }); 
+                .ReturnsAsync(new TrackFileSaveDto { isSaved = true });
             fileServiceMock.Setup(
                 s => s.CheckFileSpecs(It.IsAny<IFormFile>(), It.IsAny<FileTypes>()))
                 .Returns(true);

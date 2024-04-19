@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
 using MusicApi.StaticData;
-using NuGet.Frameworks;
 using NUnit.Framework.Internal;
 
 namespace MusicApi.Tests

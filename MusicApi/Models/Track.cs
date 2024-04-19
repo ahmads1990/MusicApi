@@ -1,6 +1,4 @@
-﻿using MusicApi.Models.Join;
-
-namespace MusicApi.Models
+﻿namespace MusicApi.Models
 {
     public class Track
     {

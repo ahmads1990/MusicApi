@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using MusicApi.Models;
 
 namespace MusicApi.Services
 {
@@ -29,7 +28,7 @@ namespace MusicApi.Services
                 .Where(g => genreIds.Contains(g.Id))
                 .AsNoTracking()
                 .ToListAsync();
-        }     
+        }
         public bool CheckGenreExist(int id)
         {
             return _dbContext.Genres.Any(g => g.Id == id);

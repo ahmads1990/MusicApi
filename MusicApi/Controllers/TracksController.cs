@@ -1,14 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc;
 using MusicApi.Helpers;
-using MusicApi.Helpers.Config.FilesConfig;
 using MusicApi.Services.FileServices;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MusicApi.Controllers
 {

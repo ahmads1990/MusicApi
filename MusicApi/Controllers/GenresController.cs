@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MusicApi.Models;
 
 namespace MusicApi.Controllers
 {
