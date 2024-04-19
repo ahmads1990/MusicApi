@@ -13,18 +13,23 @@ namespace MusicApi.Services
         }
         public async Task<IEnumerable<Genre>> GetAllAsync()
         {
-            return await _dbContext.Genres.ToListAsync();
+            return await _dbContext.Genres
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        public async Task<Genre?> GetByIdAsync(int id)
+        {
+            return await _dbContext.Genres
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Id == id);
         }
         public async Task<IEnumerable<Genre>> GetAllWithIdAsync(IEnumerable<int> genreIds)
         {
             return await _dbContext.Genres
                 .Where(g => genreIds.Contains(g.Id))
+                .AsNoTracking()
                 .ToListAsync();
-        }
-        public async Task<Genre> GetByIdAsync(int id)
-        {
-            return await _dbContext.Genres.FirstOrDefaultAsync(g => g.Id == id);
-        }
+        }     
         public bool CheckGenreExist(int id)
         {
             return _dbContext.Genres.Any(g => g.Id == id);
@@ -42,7 +47,7 @@ namespace MusicApi.Services
 
             return createdGenre.Entity;
         }
-        public Genre UpdateGenre(Genre genre)
+        public Genre? UpdateGenre(Genre genre)
         {
             if (genre == null || string.IsNullOrEmpty(genre.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
@@ -57,7 +62,7 @@ namespace MusicApi.Services
 
             return updatedGenre.Entity;
         }
-        public Genre DeleteGenre(Genre genre)
+        public Genre? DeleteGenre(Genre genre)
         {
             if (genre == null || string.IsNullOrEmpty(genre.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
