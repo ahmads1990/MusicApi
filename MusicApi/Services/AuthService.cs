@@ -8,6 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+#pragma warning disable CS8604, CS8601, CS8602 // Possible null reference argument.
+
 namespace MusicApi.Services
 {
     public class AuthService : IAuthService
@@ -102,7 +104,7 @@ namespace MusicApi.Services
             
             return result.Succeeded ? string.Empty : "Something went wrong";
         }
-        private async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
+        private async Task<JwtSecurityToken?> CreateJwtTokenAsync(ApplicationUser user)
         {
             if (user is null) return null;
             // get user claims
@@ -115,7 +117,8 @@ namespace MusicApi.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("uid", user.Id)
             };
-            // merge both claims lists and jwtClaims to allClaims
+#pragma warning restore CS8604 // Possible null reference argument.
+                              // merge both claims lists and jwtClaims to allClaims
             var allClaims =  jwtClaims.Union(userClaims);
 
             // specify the signing key and algorithm
