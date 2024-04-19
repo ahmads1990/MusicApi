@@ -1,10 +1,13 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MusicApi.Controllers;
 using MusicApi.Dtos;
+using MusicApi.Helpers;
 using MusicApi.Models;
+using MusicApi.Services.FileServices;
 using MusicApi.StaticData;
 using System;
 using System.Collections.Generic;
@@ -20,12 +23,14 @@ namespace MusicApi.Tests
         TracksController tracksController;
         Mock<ITrackRepo> trackRepoMock;
         Mock<IGenreRepo> genreRepoMock;
+        Mock<IFileService> fileServiceMock;
         [SetUp]
         public void Setup()
         {
             trackRepoMock = new Mock<ITrackRepo>();
             genreRepoMock = new Mock<IGenreRepo>();
-            tracksController = new TracksController(trackRepoMock.Object, genreRepoMock.Object);
+            fileServiceMock = new Mock<IFileService>();
+            tracksController = new TracksController(trackRepoMock.Object, genreRepoMock.Object, fileServiceMock.Object);
         }
         // names = (httpVerb)_Endpoint_Input_ExpectedResult
         // GetTracks
@@ -83,6 +88,14 @@ namespace MusicApi.Tests
             genreRepoMock.Setup(s => s.GetAllWithIdAsync(It.IsAny<IEnumerable<int>>()))
               .ReturnsAsync(new List<Genre>() { new Genre() });
 
+            // fileServiceMock
+            fileServiceMock.Setup(
+                s => s.SaveTrackFileHLS(It.IsAny<IFormFile>(), It.IsAny<string>()))
+                .ReturnsAsync(new TrackFileSaveDto { isSaved = true }); 
+            fileServiceMock.Setup(
+                s => s.CheckFileSpecs(It.IsAny<IFormFile>(), It.IsAny<FileTypes>()))
+                .Returns(true);
+
             var result = await tracksController.CreateNewTrack(trackDto);
 
             trackRepoMock.Verify(x => x.CreateNewTrack(It.IsAny<Track>()), Times.Once);
@@ -96,6 +109,14 @@ namespace MusicApi.Tests
                 .ThrowsAsync(new ArgumentException());
             genreRepoMock.Setup(s => s.GetAllWithIdAsync(It.IsAny<IEnumerable<int>>()))
                 .ReturnsAsync(new List<Genre>() { new Genre() });
+
+            // fileServiceMock
+            fileServiceMock.Setup(
+                s => s.SaveTrackFileHLS(It.IsAny<IFormFile>(), It.IsAny<string>()))
+                .ReturnsAsync(new TrackFileSaveDto { isSaved = true });
+            fileServiceMock.Setup(
+                s => s.CheckFileSpecs(It.IsAny<IFormFile>(), It.IsAny<FileTypes>()))
+                .Returns(true);
 
             var result = await tracksController.CreateNewTrack(trackDto);
 
