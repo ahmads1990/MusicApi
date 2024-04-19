@@ -2,8 +2,8 @@
 {
     public class FileServiceConfig
     {
-        public List<string> AllowedFileExtensions { get; set; }
+        public List<string> AllowedFileExtensions { get; set; } = default!;
         public int FileMaxSizeMB { get; set; }
-        public string SaveDirectory { get; set; }
+        public string SaveDirectory { get; set; } = string.Empty;
     }
 }
