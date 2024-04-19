@@ -13,15 +13,17 @@ namespace MusicApi.Services
         {
             return await _dbContext.Tracks
                                 .Include(t=>t.Genres)
+                                .AsNoTracking()
                                 .ToListAsync();
         }
-        public Track GetById(int id)
+        public Track? GetById(int id)
         {
             return _dbContext.Tracks
                 .Include(t=>t.Genres)
+                .AsNoTracking()
                 .FirstOrDefault(t => t.Id == id);
         }
-        public async Task<Track> GetByIdAsync(int id)
+        public async Task<Track?> GetByIdAsync(int id)
         {
             return await _dbContext.Tracks
                 .Include(t => t.Genres)
@@ -44,7 +46,7 @@ namespace MusicApi.Services
 
             return createdTrack.Entity;
         }
-        public Track UpdateTrack(Track track)
+        public Track? UpdateTrack(Track track)
         {
             if (track == null || string.IsNullOrEmpty(track.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
@@ -59,7 +61,7 @@ namespace MusicApi.Services
 
             return updatedTrack.Entity;
         }
-        public Track DeleteTrack(Track track)
+        public Track? DeleteTrack(Track track)
         {
             if (track == null || string.IsNullOrEmpty(track.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
