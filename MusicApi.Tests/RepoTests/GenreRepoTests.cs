@@ -4,7 +4,7 @@ using MusicApi.Models;
 using MusicApi.Repositories.Interfaces;
 using MusicApi.StaticData;
 
-namespace MusicApi.Tests
+namespace MusicApi.Tests.RepoTests
 {
     public class GenreRepoTests
     {

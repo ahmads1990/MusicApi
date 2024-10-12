@@ -5,7 +5,7 @@ using MusicApi.Repositories.Interfaces;
 using MusicApi.StaticData;
 using NUnit.Framework.Internal;
 
-namespace MusicApi.Tests
+namespace MusicApi.Tests.RepoTests
 {
     [TestFixture]
     public class TrackRepoTests
