@@ -1,7 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using MusicApi.Repositories.Interfaces;
 
-namespace MusicApi.Services
+namespace MusicApi.Repositories
 {
     public class GenreRepo : IGenreRepo
     {

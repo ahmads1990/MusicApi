@@ -6,6 +6,7 @@ using MusicApi.Controllers;
 using MusicApi.Dtos;
 using MusicApi.Helpers;
 using MusicApi.Models;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.Services.FileServices;
 
 namespace MusicApi.Tests

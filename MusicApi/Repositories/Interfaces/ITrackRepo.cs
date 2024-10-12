@@ -1,4 +1,4 @@
-﻿namespace MusicApi.Services.Interfaces
+﻿namespace MusicApi.Repositories.Interfaces
 {
     public interface ITrackRepo
     {

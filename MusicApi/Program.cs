@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MusicApi.Helpers.Config;
 using MusicApi.Helpers.Config.FilesConfig;
+using MusicApi.Repositories;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.Services.FileServices;
 using System.Reflection;
 using System.Text;

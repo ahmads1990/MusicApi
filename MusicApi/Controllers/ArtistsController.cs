@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicApi.Helpers;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.Services.FileServices;
 
 namespace MusicApi.Controllers
