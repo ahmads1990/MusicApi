@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
+using MusicApi.Repositories;
 using MusicApi.Repositories.Interfaces;
 using MusicApi.StaticData;
 
