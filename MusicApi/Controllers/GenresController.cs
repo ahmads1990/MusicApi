@@ -7,22 +7,22 @@ namespace MusicApi.Controllers
     [Route("[controller]")]
     public class GenresController : ControllerBase
     {
-        private readonly IGenreRepo _genreRepo;
-        public GenresController(IGenreRepo genreRepo)
+        private readonly IGenreService _genreService;
+        public GenresController(IGenreService genreService)
         {
-            _genreRepo = genreRepo;
+            _genreService = genreService;
         }
         [HttpGet("")]
         public async Task<IActionResult> GetAllGenres()
         {
-            var genres = await _genreRepo.GetAllAsync();
+            var genres = await _genreService.GetAllAsync();
             var responseDto = genres.Adapt<IEnumerable<GenreDto>>();
             return Ok(responseDto);
         }
         [HttpGet("{genreId}")]
         public async Task<IActionResult> GetGenreById(int genreId)
         {
-            var genre = await _genreRepo.GetByIdAsync(genreId);
+            var genre = await _genreService.GetByIdAsync(genreId);
 
             if (genre == null)
                 return NotFound(ExceptionMessages.EntityDoesntExist);
@@ -37,7 +37,7 @@ namespace MusicApi.Controllers
             {
                 // First map to domain model then pass it to services
                 var newGenre = newGenreDto.Adapt<Genre>();
-                var createdGenre = await _genreRepo.CreateNewGenre(newGenre);
+                var createdGenre = await _genreService.CreateNewGenre(newGenre);
 
                 // Map resulting domain model back to Dto for trasnfer
                 var responseDto = createdGenre.Adapt<GenreDto>();
@@ -54,7 +54,7 @@ namespace MusicApi.Controllers
             try
             {
                 var newGenre = newGenreDto.Adapt<Genre>();
-                var updatedGenre = _genreRepo.UpdateGenre(newGenre);
+                var updatedGenre = _genreService.UpdateGenre(newGenre);
 
                 if (updatedGenre == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
@@ -73,7 +73,7 @@ namespace MusicApi.Controllers
             try
             {
                 var genre = genreDto.Adapt<Genre>();
-                var deletedGenre = _genreRepo.DeleteGenre(genre);
+                var deletedGenre = _genreService.DeleteGenre(genre);
 
                 if (deletedGenre == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
