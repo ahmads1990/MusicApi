@@ -73,6 +73,11 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 // DI
 builder.Services.AddScoped<ITrackRepo, TrackRepo>();
 builder.Services.AddScoped<IGenreRepo, GenreRepo>();
+builder.Services.AddScoped<IArtistRepo, ArtistRepo>();
+
+builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFileService, FileService>();
