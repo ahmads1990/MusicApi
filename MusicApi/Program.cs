@@ -17,6 +17,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// DI
+// Repositories
+builder.Services.AddScoped<ITrackRepo, TrackRepo>();
+builder.Services.AddScoped<IGenreRepo, GenreRepo>();
+builder.Services.AddScoped<IArtistRepo, ArtistRepo>();
+
+// Services
+builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IFileService, FileService>();
+
 // File config
 builder.Services.Configure<TrackFileConfig>(builder.Configuration.GetSection("FileConfig:TrackFileConfig"));
 builder.Services.Configure<AlbumImageFileConfig>(builder.Configuration.GetSection("FileConfig:AlbumImageFileConfig"));
@@ -69,18 +83,6 @@ builder.Services.AddAuthorization();
 
 // Routing Config
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-// DI
-builder.Services.AddScoped<ITrackRepo, TrackRepo>();
-builder.Services.AddScoped<IGenreRepo, GenreRepo>();
-builder.Services.AddScoped<IArtistRepo, ArtistRepo>();
-
-builder.Services.AddScoped<ITrackService, TrackService>();
-builder.Services.AddScoped<IGenreService, GenreService>();
-builder.Services.AddScoped<IArtistService, ArtistService>();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IFileService, FileService>();
 
 //Add cors
 builder.Services.AddCors(options =>
