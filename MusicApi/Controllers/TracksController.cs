@@ -9,26 +9,28 @@ namespace MusicApi.Controllers
     [Route("[controller]")]
     public class TracksController : ControllerBase
     {
-        private readonly ITrackRepo _trackRepo;
-        private readonly IGenreRepo _genreRepo;
+        private readonly ITrackService _trackService;
+        private readonly IGenreService _genreService;
         private readonly IFileService _fileService;
         private readonly FileTypes fileType = FileTypes.TrackFile;
-        public TracksController(ITrackRepo trackRepo, IGenreRepo genreRepo, IFileService fileService)
+
+        public TracksController(ITrackService trackService, IGenreService genreService, IFileService fileService)
         {
-            _trackRepo = trackRepo;
-            _genreRepo = genreRepo;
+            _trackService = trackService;
+            _genreService = genreService;
             _fileService = fileService;
         }
+
         [HttpGet("")]
         public async Task<IActionResult> GetTracks()
         {
-            return Ok(await _trackRepo.GetAllAsync());
+            return Ok(await _trackService.GetAllAsync());
         }
 
         [HttpGet("{trackId}")]
         public async Task<IActionResult> GetTrackById(int trackId)
         {
-            var track = await _trackRepo.GetByIdAsync(trackId);
+            var track = await _trackService.GetByIdAsync(trackId);
 
             if (track == null)
                 return NotFound(ExceptionMessages.EntityDoesntExist);
@@ -46,7 +48,7 @@ namespace MusicApi.Controllers
                 // check attached genres ensure all exist in the database
                 if (addTrackDto.Genres.Count() == 0)
                     return BadRequest(ExceptionMessages.InvalidEntityData);
-                var genres = await _genreRepo.GetAllWithIdAsync(addTrackDto.Genres);
+                var genres = await _genreService.GetAllWithIdAsync(addTrackDto.Genres);
                 // check attached track file
                 if (!_fileService.CheckFileSpecs(addTrackDto.TrackFile, fileType))
                     throw new ArgumentException("Check track data");
@@ -64,7 +66,7 @@ namespace MusicApi.Controllers
                 newTrack.TrackPath = trackFileSaveDto.FileSavePathHLS;
                 newTrack.LengthInSeconds = trackFileSaveDto.FileDurationInSeconds;
 
-                var createdTrack = await _trackRepo.CreateNewTrack(newTrack);
+                var createdTrack = await _trackService.CreateNewTrack(newTrack);
 
                 // Map resulting domain model back to Dto for transfer
                 var responseDto = createdTrack.Adapt<TrackDto>();
@@ -81,12 +83,12 @@ namespace MusicApi.Controllers
             try
             {
                 // query database for the track to be updated
-                var trackToBeUpdated = await _trackRepo.GetByIdAsync(updatedTrackDto.Id);
+                var trackToBeUpdated = await _trackService.GetByIdAsync(updatedTrackDto.Id);
                 if (trackToBeUpdated == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
 
                 // query attached genres ids to ensure all exist in the database
-                var genres = await _genreRepo.GetAllWithIdAsync(updatedTrackDto.Genres.Select(g => g.Id).ToList());
+                var genres = await _genreService.GetAllWithIdAsync(updatedTrackDto.Genres.Select(g => g.Id).ToList());
 
                 // compare attached genres and returned from database
                 if (genres.Count() != updatedTrackDto.Genres.Count())
@@ -97,7 +99,7 @@ namespace MusicApi.Controllers
                 trackToBeUpdated.Genres.Clear();
                 trackToBeUpdated.Genres = (ICollection<Genre>)genres;
 
-                var updatedTrack = _trackRepo.UpdateTrack(trackToBeUpdated);
+                var updatedTrack = _trackService.UpdateTrack(trackToBeUpdated);
 
                 var responseDto = updatedTrack.Adapt<TrackDto>();
                 return Ok(responseDto);
@@ -114,7 +116,7 @@ namespace MusicApi.Controllers
             {
                 var track = TrackDto.Adapt<Track>();
                 track.Genres = null;
-                var deletedTrack = _trackRepo.DeleteTrack(track);
+                var deletedTrack = _trackService.DeleteTrack(track);
 
                 if (deletedTrack == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
