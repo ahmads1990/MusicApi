@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicApi.Helpers;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.Services.FileServices;
 
 namespace MusicApi.Controllers
@@ -8,25 +9,25 @@ namespace MusicApi.Controllers
     [Route("[controller]")]
     public class ArtistsController : ControllerBase
     {
-        private readonly IArtistRepo _artistRepo;
+        private readonly IArtistService _artistService;
         private readonly IFileService _fileService;
         private readonly FileTypes fileType = FileTypes.UserImage;
-        public ArtistsController(IArtistRepo artistRepo, IFileService fileService)
+        public ArtistsController(IArtistService artistService, IFileService fileService)
         {
-            _artistRepo = artistRepo;
+            _artistService = artistService;
             _fileService = fileService;
         }
         [HttpGet("")]
         public async Task<IActionResult> GetAllArtists()
         {
-            var artists = await _artistRepo.GetAllAsync();
+            var artists = await _artistService.GetAllAsync();
             var responseDto = artists.Adapt<IEnumerable<ArtistDto>>();
             return Ok(responseDto);
         }
         [HttpGet("{artistId}")]
         public async Task<IActionResult> GetArtistById(int artistId)
         {
-            var artist = await _artistRepo.GetByIdAsync(artistId);
+            var artist = await _artistService.GetByIdAsync(artistId);
 
             if (artist == null)
                 return NotFound(ExceptionMessages.EntityDoesntExist);
@@ -49,7 +50,7 @@ namespace MusicApi.Controllers
 
                 // map to domain model then pass it to services
                 var newArtist = newArtistDto.Adapt<Artist>();
-                var createdGenre = await _artistRepo.CreateNewArtist(newArtist);
+                var createdGenre = await _artistService.CreateNewArtist(newArtist);
 
                 // Map resulting domain model back to Dto for transfer
                 var responseDto = createdGenre.Adapt<GenreDto>();
@@ -71,7 +72,7 @@ namespace MusicApi.Controllers
             try
             {
                 var newArtist = artistDto.Adapt<Artist>();
-                var updatedArtist = _artistRepo.UpdateArtistAsync(newArtist);
+                var updatedArtist = _artistService.UpdateArtistAsync(newArtist);
 
                 if (updatedArtist == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);
@@ -90,7 +91,7 @@ namespace MusicApi.Controllers
             try
             {
                 var artist = artistDto.Adapt<Artist>();
-                var deletedArtist = _artistRepo.DeleteArtistAsync(artist);
+                var deletedArtist = _artistService.DeleteArtistAsync(artist);
 
                 if (deletedArtist == null)
                     return NotFound(ExceptionMessages.EntityDoesntExist);

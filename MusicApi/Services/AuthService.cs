@@ -8,6 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+#pragma warning disable CS8604, CS8601, CS8602 // Possible null reference argument.
+
 namespace MusicApi.Services
 {
     public class AuthService : IAuthService
@@ -53,8 +55,8 @@ namespace MusicApi.Services
                 Username = user.UserName,
                 Email = user.Email,
                 Claims = new List<string>(),
-                Token=new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                ExpiresOn=jwtToken.ValidTo                         
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                ExpiresOn = jwtToken.ValidTo
             };
         }
         public async Task<AuthModel> LoginUserAsync(LoginModel loginModel)
@@ -62,7 +64,7 @@ namespace MusicApi.Services
             AuthModel authModel = new AuthModel();
             // return if email doesn't exist OR email+password don't match
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
-            if(user is null || !await _userManager.CheckPasswordAsync(user, loginModel.Password))
+            if (user is null || !await _userManager.CheckPasswordAsync(user, loginModel.Password))
             {
                 authModel.Message = "Email or Password is incorrect!";
                 return authModel;
@@ -74,9 +76,9 @@ namespace MusicApi.Services
             authModel.IsAuthenticated = true;
             authModel.Username = user.UserName;
             authModel.Email = user.Email;
-            authModel.Claims = claims.Select(c=>c.Type).ToList();
+            authModel.Claims = claims.Select(c => c.Type).ToList();
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            authModel.ExpiresOn=jwtToken.ValidTo;
+            authModel.ExpiresOn = jwtToken.ValidTo;
 
             return authModel;
         }
@@ -91,18 +93,18 @@ namespace MusicApi.Services
             // claim type exists in allowed types
             if (!CustomClaimTypes.ALLOWEDTYPES.Contains(claimModel.ClaimType))
                 return "Invalid claim type not allowed";
-           
+
             // check user claims to see if user has this claim already
             var claims = await _userManager.GetClaimsAsync(user);
-            if(claims.FirstOrDefault(c=>c.Type.Equals(claimModel.ClaimType)) != null)
+            if (claims.FirstOrDefault(c => c.Type.Equals(claimModel.ClaimType)) != null)
                 return "User already assigned to this claim";
 
             // try to add the claim to user
             var result = await _userManager.AddClaimAsync(user, new Claim(claimModel.ClaimType, claimModel.ClaimValue));
-            
+
             return result.Succeeded ? string.Empty : "Something went wrong";
         }
-        private async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
+        private async Task<JwtSecurityToken?> CreateJwtTokenAsync(ApplicationUser user)
         {
             if (user is null) return null;
             // get user claims
@@ -115,8 +117,9 @@ namespace MusicApi.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("uid", user.Id)
             };
+#pragma warning restore CS8604 // Possible null reference argument.
             // merge both claims lists and jwtClaims to allClaims
-            var allClaims =  jwtClaims.Union(userClaims);
+            var allClaims = jwtClaims.Union(userClaims);
 
             // specify the signing key and algorithm
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));

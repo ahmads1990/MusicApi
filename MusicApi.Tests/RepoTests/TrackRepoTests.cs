@@ -1,11 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
+using MusicApi.Repositories;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.StaticData;
-using NuGet.Frameworks;
 using NUnit.Framework.Internal;
 
-namespace MusicApi.Tests
+namespace MusicApi.Tests.RepoTests
 {
     [TestFixture]
     public class TrackRepoTests
@@ -45,6 +46,7 @@ namespace MusicApi.Tests
             }
             // testing context
             appDbContext = new AppDbContext(options);
+            trackRepo = new TrackRepo(appDbContext);
         }
         [TearDown]
         public void TearDown()
@@ -58,7 +60,7 @@ namespace MusicApi.Tests
         public async Task GetAllTracks_ValidData_NotNull()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //trackRepo = new TrackRepo(appDbContext);
             // Act
             var result = await trackRepo.GetAllAsync();
             // Assert
@@ -68,7 +70,7 @@ namespace MusicApi.Tests
         public async Task GetAllTracks_ValidData_CountEqualSeed()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //trackRepo = new TrackRepo(appDbContext);
             // Act
             var result = await trackRepo.GetAllAsync();
             // Assert
@@ -79,19 +81,19 @@ namespace MusicApi.Tests
         public async Task GetByIdAsync_ValidId_ValidTrack()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             int testId = 1;
             var expectedTrack = GetTrackSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = await trackRepo.GetByIdAsync(testId);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(expectedTrack.Id));
+            Assert.That(result?.Id, Is.EqualTo(expectedTrack?.Id));
         }
         [Test]
         public async Task GetByIdAsync_InvalidId_Null()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             int testId = -1;
             // Act
             var result = await trackRepo.GetByIdAsync(testId);
@@ -103,19 +105,19 @@ namespace MusicApi.Tests
         public void GetById_ValidId_ValidTrack()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             int testId = 1;
             var expectedTrack = GetTrackSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = trackRepo.GetById(testId);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(expectedTrack.Id));
+            Assert.That(result?.Id, Is.EqualTo(expectedTrack?.Id));
         }
         [Test]
         public void GetById_InvalidId_Null()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             int testId = -1;
             // Act
             var result = trackRepo.GetById(testId);
@@ -127,7 +129,7 @@ namespace MusicApi.Tests
         public async Task CreateNewTrack_ValidTrack_NewTrack()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            // trackRepo = new TrackRepo(appDbContext);
             var newTrack = GetTrackSeedData().First();
             newTrack.Id = 0;
             newTrack.Name = "NewTrack";
@@ -140,7 +142,7 @@ namespace MusicApi.Tests
         public void CreateNewTrack_InvalidTrackName_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var newTrack = new Track { Name = "" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -152,7 +154,7 @@ namespace MusicApi.Tests
         public void CreateNewTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var newTrack = new Track { Id = -1, Name = "trackName" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -165,22 +167,22 @@ namespace MusicApi.Tests
         public void UpdateTrack_ValidTrack_UpdatedTrack()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var updatedTrack = GetTrackSeedData().First();
             updatedTrack.Name = "UpdatedTrack";
             // Act
             var result = trackRepo.UpdateTrack(updatedTrack);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(updatedTrack.Id));
-            Assert.That(result.Name, Is.EqualTo(updatedTrack.Name));
+            Assert.That(result?.Id, Is.EqualTo(updatedTrack?.Id));
+            Assert.That(result?.Name, Is.EqualTo(updatedTrack?.Name));
         }
         [Test]
         public void UpdateTrack_InvalidTrackName_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            // trackRepo = new TrackRepo(appDbContext);
             var updatedTrack = GetTrackSeedData().First();
-            updatedTrack.Name = null;
+            updatedTrack.Name = string.Empty;
 
             var exception = Assert.Throws<ArgumentException>(() =>
                 trackRepo.UpdateTrack(updatedTrack));
@@ -191,7 +193,7 @@ namespace MusicApi.Tests
         public void UpdateTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            // trackRepo = new TrackRepo(appDbContext);
             var toUpdateTrack = new Track { Id = -1, Name = "trackName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -203,7 +205,7 @@ namespace MusicApi.Tests
         public void UpdateTrack_NonExistingTrackId_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var toUpdateTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
             var result = trackRepo.UpdateTrack(toUpdateTrack);
@@ -215,18 +217,18 @@ namespace MusicApi.Tests
         public void DeleteTrack_ValidId_toDeleteTrack()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = GetTrackSeedData().First();
             // Act
             var result = trackRepo.DeleteTrack(toDeleteTrack);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(toDeleteTrack.Id));
+            Assert.That(result?.Id, Is.EqualTo(toDeleteTrack?.Id));
         }
         [Test]
         public void DeleteTrack_InvalidFormatTrackId_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //   trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = new Track { Id = -1, Name = "trackName" };
 
             var exception = Assert.Throws<ArgumentException>(() =>
@@ -238,7 +240,7 @@ namespace MusicApi.Tests
         public void DeleteTrack_NonExistingTrackId_Throws()
         {
             // Arrange
-            trackRepo = new TrackRepo(appDbContext);
+            //  trackRepo = new TrackRepo(appDbContext);
             var toDeleteTrack = new Track { Id = nonExistingId, Name = "trackName" };
 
             var result = trackRepo.DeleteTrack(toDeleteTrack);

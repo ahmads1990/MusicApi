@@ -1,11 +1,11 @@
-using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using MusicApi.Helpers.Config;
 using MusicApi.Helpers.Config.FilesConfig;
+using MusicApi.Repositories;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.Services.FileServices;
 using System.Reflection;
 using System.Text;
@@ -16,6 +16,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// DI
+// Repositories
+builder.Services.AddScoped<ITrackRepo, TrackRepo>();
+builder.Services.AddScoped<IGenreRepo, GenreRepo>();
+builder.Services.AddScoped<IArtistRepo, ArtistRepo>();
+
+// Services
+builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 // File config
 builder.Services.Configure<TrackFileConfig>(builder.Configuration.GetSection("FileConfig:TrackFileConfig"));
@@ -34,7 +48,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 // configure jwt helper class to use jwt config info
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
 // add Identity with options configuration
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>{
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = true;
@@ -43,10 +58,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>{
 }).AddEntityFrameworkStores<AppDbContext>();
 
 // Add Authentication with jwt config
-builder.Services.AddAuthentication(options =>{
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(o =>
     {
         o.RequireHttpsMetadata = false;
@@ -59,7 +75,7 @@ builder.Services.AddAuthentication(options =>{
             ValidateLifetime = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "Random key")),
         };
     });
 
@@ -67,13 +83,6 @@ builder.Services.AddAuthorization();
 
 // Routing Config
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-// DI
-builder.Services.AddScoped<ITrackRepo, TrackRepo>();
-builder.Services.AddScoped<IGenreRepo, GenreRepo>();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IFileService, FileService>();
 
 //Add cors
 builder.Services.AddCors(options =>

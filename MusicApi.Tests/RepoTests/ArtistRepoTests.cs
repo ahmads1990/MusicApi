@@ -1,14 +1,11 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Models;
+using MusicApi.Repositories;
+using MusicApi.Repositories.Interfaces;
 using MusicApi.StaticData;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MusicApi.Tests
+namespace MusicApi.Tests.RepoTests
 {
     public class ArtistRepoTests
     {
@@ -49,6 +46,7 @@ namespace MusicApi.Tests
             }
             // testing context
             appDbContext = new AppDbContext(options);
+            artistService = new ArtistRepo(appDbContext);
         }
 
         [TearDown]
@@ -63,7 +61,7 @@ namespace MusicApi.Tests
         public async Task GetAllArtists_ValidData_NotNull()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             // Act
             var result = await artistService.GetAllAsync();
             // Assert
@@ -74,7 +72,7 @@ namespace MusicApi.Tests
         public async Task GetAllArtists_ValidData_CountEqualSeed()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             // Act
             var result = await artistService.GetAllAsync();
             // Assert
@@ -86,20 +84,20 @@ namespace MusicApi.Tests
         public async Task GetByIdAsync_ValidId_ValidArtist()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             int testId = 1;
             var expectedArtist = GetArtistSeedData().FirstOrDefault(p => p.Id == testId);
             // Act
             var result = await artistService.GetByIdAsync(testId);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(expectedArtist.Id));
+            Assert.That(result?.Id, Is.EqualTo(expectedArtist?.Id));
         }
 
         [Test]
         public async Task GetByIdAsync_InvalidId_Null()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             int testId = -1;
             // Act
             var result = await artistService.GetByIdAsync(testId);
@@ -112,20 +110,20 @@ namespace MusicApi.Tests
         public async Task SearchByNameAsync_ExistingName_ValidArtist()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             string testName = "Artist1";
             var expectedArtist = GetArtistSeedData().FirstOrDefault(p => p.Name.Equals(testName, StringComparison.InvariantCultureIgnoreCase));
             // Act
             var result = await artistService.SearchByNameAsync(testName);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(expectedArtist.Id));
+            Assert.That(result?.Id, Is.EqualTo(expectedArtist?.Id));
         }
 
         [Test]
         public async Task SearchByNameAsync_NonExistingName_Null()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             string testName = "NonExistingArtist";
             // Act
             var result = await artistService.SearchByNameAsync(testName);
@@ -138,7 +136,7 @@ namespace MusicApi.Tests
         public async Task CheckArtistExistAsync_ExistingId_True()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             int testId = 1;
             // Act
             var result = await artistService.CheckArtistExistAsync(testId);
@@ -150,7 +148,7 @@ namespace MusicApi.Tests
         public async Task CheckArtistExistAsync_NonExistingId_False()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             int testId = nonExistingId;
             // Act
             var result = await artistService.CheckArtistExistAsync(testId);
@@ -163,7 +161,7 @@ namespace MusicApi.Tests
         public async Task CreateNewArtist_ValidArtist_NewArtist()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var newArtist = new Artist { Name = "NewArtist", Biography = "Bio", Followers = 1000, CoverPath = "cover.jpg" };
             // Act
             var result = await artistService.CreateNewArtist(newArtist);
@@ -175,7 +173,7 @@ namespace MusicApi.Tests
         public void CreateNewArtist_InvalidArtistName_Throws()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var newArtist = new Artist { Name = "" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -188,7 +186,7 @@ namespace MusicApi.Tests
         public void CreateNewArtist_InvalidArtistId_Throws()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var newArtist = new Artist { Id = -1, Name = "NewArtist" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -202,13 +200,13 @@ namespace MusicApi.Tests
         public async Task UpdateArtistAsync_ValidArtist_UpdatedArtist()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             var toUpdateArtist = GetArtistSeedData().First();
             toUpdateArtist.Name = "UpdatedArtist";
             // Act
             var result = await artistService.UpdateArtistAsync(toUpdateArtist);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(toUpdateArtist.Id));
+            Assert.That(result?.Id, Is.EqualTo(toUpdateArtist.Id));
             Assert.That(result.Name, Is.EqualTo(toUpdateArtist.Name));
         }
 
@@ -216,9 +214,9 @@ namespace MusicApi.Tests
         public void UpdateArtistAsync_InvalidArtistName_Throws()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             var toUpdateArtist = GetArtistSeedData().First();
-            toUpdateArtist.Name = null;
+            toUpdateArtist.Name = string.Empty;
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
                 await artistService.UpdateArtistAsync(toUpdateArtist));
@@ -230,7 +228,7 @@ namespace MusicApi.Tests
         public void UpdateArtistAsync_InvalidArtistId_Throws()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            // artistService = new ArtistRepo(appDbContext);
             var toUpdateArtist = new Artist { Id = -1, Name = "UpdatedArtist" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -243,7 +241,7 @@ namespace MusicApi.Tests
         public void UpdateArtistAsync_NonExistingArtistId_Null()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var toUpdateArtist = new Artist { Id = nonExistingId, Name = "UpdatedArtist" };
 
             var result = artistService.UpdateArtistAsync(toUpdateArtist);
@@ -256,19 +254,19 @@ namespace MusicApi.Tests
         public async Task DeleteArtistAsync_ValidId_DeletedArtist()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var toDeleteArtist = GetArtistSeedData().First();
             // Act
             var result = await artistService.DeleteArtistAsync(toDeleteArtist);
             // Assert
-            Assert.That(result.Id, Is.EqualTo(toDeleteArtist.Id));
+            Assert.That(result?.Id, Is.EqualTo(toDeleteArtist.Id));
         }
 
         [Test]
         public void DeleteArtistAsync_InvalidArtistId_Throws()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var toDeleteArtist = new Artist { Id = -1, Name = "DeletedArtist" };
 
             var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -281,7 +279,7 @@ namespace MusicApi.Tests
         public void DeleteArtistAsync_NonExistingArtistId_Null()
         {
             // Arrange
-            artistService = new ArtistRepo(appDbContext);
+            //  artistService = new ArtistRepo(appDbContext);
             var toDeleteArtist = new Artist { Id = nonExistingId, Name = "DeletedArtist" };
 
             var result = artistService.DeleteArtistAsync(toDeleteArtist);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MusicApi.Repositories.Interfaces;
 
-namespace MusicApi.Services
+namespace MusicApi.Repositories
 {
     public class TrackRepo : ITrackRepo
     {
@@ -12,20 +13,22 @@ namespace MusicApi.Services
         public async Task<IEnumerable<Track>> GetAllAsync()
         {
             return await _dbContext.Tracks
-                                .Include(t=>t.Genres)
+                                .Include(t => t.Genres)
+                                .AsNoTracking()
                                 .ToListAsync();
         }
-        public Track GetById(int id)
+        public Track? GetById(int id)
         {
             return _dbContext.Tracks
-                .Include(t=>t.Genres)
+                .Include(t => t.Genres)
+                .AsNoTracking()
                 .FirstOrDefault(t => t.Id == id);
         }
-        public async Task<Track> GetByIdAsync(int id)
+        public async Task<Track?> GetByIdAsync(int id)
         {
             return await _dbContext.Tracks
                 .Include(t => t.Genres)
-                .FirstOrDefaultAsync(t => t.Id == id);       
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
         public bool CheckTrackExist(int id)
         {
@@ -37,14 +40,14 @@ namespace MusicApi.Services
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
 
             if (newTrack.Id != 0)
-                throw new ArgumentException(ExceptionMessages.InvalidEntityId);            
+                throw new ArgumentException(ExceptionMessages.InvalidEntityId);
 
             var createdTrack = await _dbContext.Tracks.AddAsync(newTrack);
             await _dbContext.SaveChangesAsync();
 
             return createdTrack.Entity;
         }
-        public Track UpdateTrack(Track track)
+        public Track? UpdateTrack(Track track)
         {
             if (track == null || string.IsNullOrEmpty(track.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
@@ -59,7 +62,7 @@ namespace MusicApi.Services
 
             return updatedTrack.Entity;
         }
-        public Track DeleteTrack(Track track)
+        public Track? DeleteTrack(Track track)
         {
             if (track == null || string.IsNullOrEmpty(track.Name))
                 throw new ArgumentException(ExceptionMessages.InvalidEntityData);
